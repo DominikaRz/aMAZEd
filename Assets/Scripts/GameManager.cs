@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public MazeCell cellPrefab;
     private StoryDisplay storyDisplay;
 
+    private LevelDisplay levelDisplay;
+
     public GameObject entryRoomPrefab;
     public GameObject exitRoomPrefab;
     public PlayableDirector cutsceneDirector;
@@ -47,12 +49,26 @@ public class GameManager : MonoBehaviour
 
     public int numberOfStories = 0;
     //private DataLevel level;
-    public int level = 1;
+    public int level=1;
 
     private void Start()
     {
+        if (SaveSystem.CheckSaveFileExists())
+        {
+            // Load existing save data
+            //GameData currentData = SaveSystem.LoadGame();
+            Debug.Log($"NO!!!");
+            // Initialize the game with the loaded data
+        }
+        //else
+        //{
+            // No save file exists, start a new game
+            // Optionally save initial game state
+            //SaveSystem.SaveGame(initialGameData);
+        //}
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
+        levelDisplay = FindObjectOfType<LevelDisplay>();
     }
 
     private void Update()
@@ -85,6 +101,13 @@ public class GameManager : MonoBehaviour
 
     private void LevelSettings()
     {
+        level = SaveSystem.LoadLevel();
+        Debug.Log($"Level loaded: {level}");
+        if(level == 0)
+        { 
+            level = 1;
+            SaveSystem.SaveLevel(level);
+        }
         if (level == 1) // Assuming the first level is represented by 1
         {
             mazeInstance.size = new IntVector2(5, 5); // Set maze size for level 1
@@ -137,16 +160,6 @@ public class GameManager : MonoBehaviour
         
         // Instantiate and generate the maze.
         mazeInstance = Instantiate(mazePrefab) as Maze;
-
-        /*
-        level = SaveLevel.Load();
-        if (level != null)
-        {
-            if (level == 0){
-                //logic of generating the level
-            }
-        }
-        */
 
         // Adjust game settings based on the level
         LevelSettings();
@@ -217,8 +230,8 @@ public class GameManager : MonoBehaviour
 
         
         //storyDisplay.message = "Level: 1, 2, 3, 4, 5, 6, 7, 8, 9 , 0";//+level;
-        //storyDisplay.message = "Level: " + level;
-        //storyDisplay.DisplayMessage();
+        levelDisplay.message = level.ToString();
+        levelDisplay.DisplayMessage();
        
     }
 
@@ -282,7 +295,7 @@ public class GameManager : MonoBehaviour
 
         SaveData saveData = new SaveData();
     //number of level
-        //saveData.levelNumber = level;
+        saveData.levelNumber = level;
     //player position    
         saveData.playerPositionX = playerInstance.transform.position.x;
         saveData.playerPositionY = playerInstance.transform.position.y;
@@ -293,7 +306,7 @@ public class GameManager : MonoBehaviour
         saveData.cameraRotationY = cameraTransform.eulerAngles.y;
         saveData.cameraRotationZ = cameraTransform.eulerAngles.z;
     //number of keyes
-        //saveData.numberOfCollectedKeyes = playerInstance.keysCollected;
+        saveData.numberOfCollectedKeyes = playerInstance.keysCollected;
         
         SaveSystem.SaveGame(saveData);
 
@@ -303,11 +316,11 @@ public class GameManager : MonoBehaviour
         SaveData saveData = SaveSystem.LoadGame();
         if (saveData != null)
         {
-            //level = saveData.levelNumber;
+            level = saveData.levelNumber;
             if (playerInstance != null)
             {
                 playerInstance.transform.position = new Vector3(saveData.playerPositionX, saveData.playerPositionY, saveData.playerPositionZ);
-                //playerInstance.keysCollected = saveData.numberOfCollectedKeyes;
+                playerInstance.keysCollected = saveData.numberOfCollectedKeyes;
             }
             else
             {
@@ -459,13 +472,14 @@ public class GameManager : MonoBehaviour
     public void NewLevel()
     {
         //save the number of current level
+        //level++;
+        int lev = level + 1;
+        Debug.Log($"Level saved: {lev}");
+        SaveSystem.SaveLevel(lev);
 
+        RestartGame();
         /*
-        DataLevel saveLevel = new DataLevel();
-        DataLevel.level = level + 1;
-        SaveLevel.Save(level);*/
-
-        level++;
+        
 
         // Stop all coroutines to prevent them from affecting the new game instance
         StopAllCoroutines();
@@ -513,7 +527,8 @@ public class GameManager : MonoBehaviour
 
 
         // Start a new game
-        StartCoroutine(BeginGame());
+        StartCoroutine(BeginGame());*/
+        //BeginGame();
     }
 
    

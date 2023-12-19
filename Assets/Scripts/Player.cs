@@ -155,8 +155,8 @@ public class Player : MonoBehaviour
                 storyDisplay.DisplayMessage();
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
-                    //gameManager.NewLevel(); // Call the NextLevel method when Enter is pressed
-                    gameManager.RestartGame(); // Call the NextLevel method when Enter is pressed
+                    gameManager.NewLevel(); // Call the NextLevel method when Enter is pressed
+                    //gameManager.RestartGame(); // Call the NextLevel method when Enter is pressed
                 }
                 else
                 {
