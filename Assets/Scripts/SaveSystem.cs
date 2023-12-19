@@ -59,5 +59,42 @@ public static class SaveSystem
         }
         return null;
     }
+
+    public static bool CheckSaveFileExists()
+    {
+        return File.Exists(path);
+    }
+
+
+//only for level
+    public static void SaveLevel(int levelNumber)
+    {
+        var levelData = new { LevelNumber = levelNumber };
+        string json = JsonUtility.ToJson(levelData);
+        File.WriteAllText(path, json); // 'path' should be the file path where you want to save the JSON.
+    }
+    public static int LoadLevel()
+    {
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            LevelData levelData = JsonUtility.FromJson<LevelData>(json);
+            return levelData.LevelNumber;
+        }
+        else
+        {
+            Debug.LogError("Level file not found in " + path);
+            return -1; // Or any default value indicating an error
+        }
+    }
+
+
+
 }
 /**/
+
+[System.Serializable]
+public class LevelData
+{
+    public int LevelNumber;
+}

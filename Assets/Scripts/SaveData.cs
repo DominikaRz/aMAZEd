@@ -38,13 +38,19 @@ using System.Collections.Generic;
 
 public class SaveData
 {
-    //public int levelNumber;
+    public int levelNumber;
 
     public float playerPositionX, playerPositionY, playerPositionZ;
     public float cameraRotationX, cameraRotationY, cameraRotationZ;
 
     //public int playerHealth;
-    //public int numberOfCollectedKeyes;
+    public int numberOfCollectedKeyes;
+
+    public int GetLevelNumber() 
+    {
+        return this.levelNumber; // Assuming 'levelNumber' is the property storing the level number.
+    }
+
 
 }
 /**/
