@@ -44,28 +44,16 @@ public class GameManager : MonoBehaviour
     public static int numberOfKeys = 3;
     public static int numberOfHealths = 2;
 
+    private SaveLevel saveLevelInstance;
+
     public GameObject storyItemPrefab; // Assign your story item prefab in the Inspector
     private string[] storyFiles;  // Array of story file names
 
     public int numberOfStories = 0;
-    //private DataLevel level;
     public int level=1;
 
     private void Start()
     {
-        if (SaveSystem.CheckSaveFileExists())
-        {
-            // Load existing save data
-            //GameData currentData = SaveSystem.LoadGame();
-            Debug.Log($"NO!!!");
-            // Initialize the game with the loaded data
-        }
-        //else
-        //{
-            // No save file exists, start a new game
-            // Optionally save initial game state
-            //SaveSystem.SaveGame(initialGameData);
-        //}
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
@@ -96,59 +84,72 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         nmBuilder = GetComponent<MazeNavMeshBuilder>();
+        saveLevelInstance = new SaveLevel();
     }
 
 
     private void LevelSettings()
     {
-        level = SaveSystem.LoadLevel();
+        level = saveLevelInstance.LoadLvl();
         Debug.Log($"Level loaded: {level}");
         if(level == 0)
         { 
             level = 1;
-            SaveSystem.SaveLevel(level);
+            saveLevelInstance.SaveLvl(level);
         }
+       //tutorial levels 
         if (level == 1) // Assuming the first level is represented by 1
         {
-            mazeInstance.size = new IntVector2(5, 5); // Set maze size for level 1
-            mazeInstance.roomExpansionChance = 0.5f; // Set room expansion probability for level 1
-            numberOfKeys = 2; // Set number of keys for level 1
-            numberOfZombies = 0; // No zombies for level 1
-            numberOfFastZombies = 0; // No fast zombies for level 1
-            numberOfHealths = 0; // No health pickups for level 1
-            numberOfStories = 0; // No story items for level 1
+            mazeInstance.size = new IntVector2(5, 5); 
+            mazeInstance.roomExpansionChance = 0.5f; 
+            numberOfKeys = 2; 
+            numberOfZombies = 0; 
+            numberOfFastZombies = 0; 
+            numberOfHealths = 0;
+            numberOfStories = 0; 
         }
-        else if (level == 2) // Assuming the first level is represented by 1
+        else if (level == 2) 
         {
-            mazeInstance.size = new IntVector2(6, 6); // Set maze size for level 1
-            mazeInstance.roomExpansionChance = 0.4f; // Set room expansion probability for level 1
-            numberOfKeys = 2; // Set number of keys for level 1
-            numberOfZombies = 1; // No zombies for level 1
-            numberOfFastZombies = 0; // No fast zombies for level 1
-            numberOfHealths = 3; // No health pickups for level 1
-            numberOfStories = 0; // No story items for level 1
+            mazeInstance.size = new IntVector2(6, 6);
+            mazeInstance.roomExpansionChance = 0.4f; 
+            numberOfKeys = 2;
+            numberOfZombies = 1;
+            numberOfFastZombies = 0;
+            numberOfHealths = 3; 
+            numberOfStories = 0; 
         }
-        else if (level == 3) // Assuming the first level is represented by 1
+        else if (level == 3)
         {
-            mazeInstance.size = new IntVector2(7, 7); // Set maze size for level 1
-            mazeInstance.roomExpansionChance = 0.4f; // Set room expansion probability for level 1
-            numberOfKeys = 2; // Set number of keys for level 1
-            numberOfZombies = 1; // No zombies for level 1
-            numberOfFastZombies = 1; // No fast zombies for level 1
-            numberOfHealths = 6; // No health pickups for level 1
-            numberOfStories = 1; // No story items for level 1
+            mazeInstance.size = new IntVector2(7, 7);
+            mazeInstance.roomExpansionChance = 0.4f;
+            numberOfKeys = 2;
+            numberOfZombies = 0;
+            numberOfFastZombies = 1;
+            numberOfHealths = 6;
+            numberOfStories = 0; 
         }
+        else if (level == 4) 
+        {
+            mazeInstance.size = new IntVector2(7, 7);
+            mazeInstance.roomExpansionChance = 0.4f;
+            numberOfKeys = 2; 
+            numberOfZombies = 1; 
+            numberOfFastZombies = 1; 
+            numberOfHealths = 6; 
+            numberOfStories = 1; 
+        }
+       //other levels
         else
         {
             // For higher levels, increase maze size and number of zombies slightly
-            int sizeIncrease = level - 1; // The amount by which to increase the maze size and zombie count
-            mazeInstance.size = new IntVector2(5 + sizeIncrease, 5 + sizeIncrease);
-            numberOfKeys = 3; // The default number of keys for higher levels
-            numberOfZombies = 1 + sizeIncrease; // Increase number of zombies
-            numberOfFastZombies = 1 + (int)(sizeIncrease * 0.5f); // Increase number of fast zombies, half the rate of regular zombies
-            numberOfHealths = (int)(numberOfFastZombies * 4f) + (int)(numberOfZombies * 2f); // The default number of health pickups for higher levels
-            numberOfStories = 1; // The default number of story items for higher levels
-            mazeInstance.roomExpansionChance = 0.4f + 0.05f * (sizeIncrease % 10); // Increase room expansion probability
+            int sizeIncrease = level % 10; // The amount by which to increase the maze size and zombie count
+            mazeInstance.size = new IntVector2(5 + (int)(sizeIncrease * 0.1f), 5 + (int)(sizeIncrease * 0.1f));
+            numberOfKeys = 3 * (int)(sizeIncrease * Random.Range(0.2f, 2f)); // The default number of keys for higher levels
+            numberOfZombies = 1 + (int)(sizeIncrease * 0.5f); // Increase number of zombies
+            numberOfFastZombies = 1 + (int)(sizeIncrease * 0.2f); // Increase number of fast zombies, half the rate of regular zombies
+            numberOfHealths = (int)(numberOfFastZombies * 0.4f) + (int)(numberOfZombies * 0.2f); // The default number of health pickups for higher levels
+            numberOfStories = (int)(Random.Range(0, 7) / sizeIncrease); // The default number of story items for higher levels
+            mazeInstance.roomExpansionChance = 0.4f + 0.0005f * (sizeIncrease % 10); // Increase room expansion probability
         }
 
     }
@@ -300,46 +301,27 @@ public class GameManager : MonoBehaviour
         saveData.playerPositionX = playerInstance.transform.position.x;
         saveData.playerPositionY = playerInstance.transform.position.y;
         saveData.playerPositionZ = playerInstance.transform.position.z;
-    //player camera rotetion
-        Transform cameraTransform = Camera.main.transform;
-        saveData.cameraRotationX = cameraTransform.eulerAngles.x;
-        saveData.cameraRotationY = cameraTransform.eulerAngles.y;
-        saveData.cameraRotationZ = cameraTransform.eulerAngles.z;
     //number of keyes
         saveData.numberOfCollectedKeyes = playerInstance.keysCollected;
         
-        SaveSystem.SaveGame(saveData);
+        saveLevelInstance.Save(saveData);
 
     }
     public void LoadGame()
     {
-        SaveData saveData = SaveSystem.LoadGame();
+        SaveData saveData = saveLevelInstance.Load();
         if (saveData != null)
         {
             level = saveData.levelNumber;
             if (playerInstance != null)
             {
-                playerInstance.transform.position = new Vector3(saveData.playerPositionX, saveData.playerPositionY, saveData.playerPositionZ);
-                playerInstance.keysCollected = saveData.numberOfCollectedKeyes;
+                playerInstance.transform.position = new Vector3(saveData.getPositionX(), saveData.getPositionY(), saveData.getPositionZ());
+                playerInstance.keysCollected = saveData.getKeyes();     
             }
             else
             {
                 Debug.LogError("Player instance is null.");
             }
-
-            // Load other game state elements here, like enemies' positions, collected items, etc.
-        }
-        if (playerCamera != null)
-        {
-            playerCamera.transform.eulerAngles = new Vector3(
-                saveData.cameraRotationX,
-                saveData.cameraRotationY,
-                saveData.cameraRotationZ
-            );
-        }
-        else
-        {
-            Debug.LogError("No save data found.");
         }
     }
     /**/
@@ -347,19 +329,14 @@ public class GameManager : MonoBehaviour
     private void PlaceEntryAndExitRooms() {
 
         //entry room
-        /**/
         Quaternion entryRotation = Quaternion.Euler(0, 90, 0); // Adjust this as needed
         MazeCell entryCell = mazeInstance.GetCell(new IntVector2(0, 0));
         entry = Instantiate(entryRoomPrefab, entryCell.transform.position, entryRotation);
-        // Assume 'size' is the size of your maze, and 'elevatorCellPrefab' is assigned.
-		//mazeInstance.PlaceElevatorCell(new IntVector2(0, -1), false); //, MazeDirection.South
 
         //exit room
         Quaternion exitRotation = Quaternion.Euler(0, -90, 0); // Adjust this as needed
         MazeCell exitCell = mazeInstance.GetCornerCell(new IntVector2(mazeInstance.size.x - 1, mazeInstance.size.z - 1)); // Top-right corner
         exit = Instantiate(exitRoomPrefab, exitCell.transform.position, exitRotation);
-		// Place the elevator at (size.x, size.z - 1), which might be (instance+1, instance-1)
-		//mazeInstance.PlaceElevatorCell(new IntVector2(mazeInstance.size.x-1, mazeInstance.size.z), true);//, MazeDirection.North
 
         mazeInstance.RemoveWallsAtCoordinates(new IntVector2(1, 0));
         mazeInstance.RemoveWallsAtCoordinates1( new IntVector2(mazeInstance.size.x - 2, mazeInstance.size.z - 1));
@@ -472,10 +449,7 @@ public class GameManager : MonoBehaviour
     public void NewLevel()
     {
         //save the number of current level
-        //level++;
-        int lev = level + 1;
-        Debug.Log($"Level saved: {lev}");
-        SaveSystem.SaveLevel(lev);
+        saveLevelInstance.SaveLvl(level + 1);
 
         RestartGame();
         /*
