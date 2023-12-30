@@ -41,9 +41,8 @@ public class SaveData
     public int levelNumber;
 
     public float playerPositionX, playerPositionY, playerPositionZ;
-    public float cameraRotationX, cameraRotationY, cameraRotationZ;
 
-    //public int playerHealth;
+    public int playerHealth;
     public int numberOfCollectedKeyes;
 
     public int GetLevelNumber() 
@@ -52,5 +51,47 @@ public class SaveData
     }
 
 
+   //getters
+    public int getLevel(){
+        return this.levelNumber;
+    }
+
+    public float getPositionX(){
+        return this.playerPositionX;
+    }
+    
+    public float getPositionY(){
+        return this.playerPositionY;
+    }
+    public float getPositionZ(){
+        return this.playerPositionZ;
+    }
+    
+    public int getHealth(){
+        return this.playerHealth;
+    }
+    public int getKeyes(){
+        return this.numberOfCollectedKeyes;
+    }
+
+   //setters
+    public void setLevel(int level){
+        this.levelNumber = level;
+    }
+
+    public void setPosition(float x, float y, float z){
+        this.playerPositionX = x;
+        this.playerPositionY = y;
+        this.playerPositionZ = z;
+    }
+
+    public void setKeyes(int keyes){
+        this.numberOfCollectedKeyes = keyes;
+    }
+    /**/
+    public void setHealth(int health){
+        this.playerHealth = health;
+    }
+
+
 }
-/**/

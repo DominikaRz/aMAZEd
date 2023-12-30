@@ -1,33 +1,53 @@
-/*public static class SaveLevel
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SaveLevel : MonoBehaviour
 {
-    public static SaveData CreateSaveData(Maze maze, Player player)
+    public void Save(SaveData data)
     {
-        SaveData saveData = new SaveData
-        {
-            mazeWidth = maze.Width,
-            mazeHeight = maze.Height,
-            cells = new List<CellData>(),
-            playerData = new PlayerData
-            {
-                positionX = player.transform.position.x,
-                positionY = player.transform.position.y,
-                positionZ = player.transform.position.z
-            }
-            // Populate other elements like zombies, keys...
-        };
+        //PlayerPrefs.SetFloat("key", value); SetInt SetString
+        PlayerPrefs.SetInt("levelNumber", data.getLevel());
 
-        foreach (var cell in maze.Cells)
-        {
-            saveData.cells.Add(new CellData
-            {
-                x = cell.X,
-                y = cell.Y,
-                isWall = cell.IsWall
-                // Populate other cell properties
-            });
-        }
+        PlayerPrefs.SetFloat("playerPositionX", data.getPositionX());
+        PlayerPrefs.SetFloat("playerPositionY", -0.033f);
+        PlayerPrefs.SetFloat("playerPositionZ", data.getPositionZ());
 
-        return saveData;
+        PlayerPrefs.SetInt("playerHealth", data.playerHealth);
+        PlayerPrefs.SetInt("numberOfCollectedKeyes", data.getKeyes());
     }
+
+    public SaveData Load()
+    {
+        SaveData data = new SaveData();
+
+        data.setLevel(PlayerPrefs.GetInt("levelNumber"));
+
+        data.setPosition(
+            PlayerPrefs.GetFloat("playerPositionX"),
+            PlayerPrefs.GetFloat("playerPositionY"),
+            PlayerPrefs.GetFloat("playerPositionZ"));
+
+        data.playerHealth = PlayerPrefs.GetInt("playerHealth");
+        data.setKeyes(PlayerPrefs.GetInt("numberOfCollectedKeyes"));
+        
+        return data;
+
+    }
+
+    public int LoadLvl()
+    {
+        return PlayerPrefs.GetInt("levelNumber");
+    }
+    public void SaveLvl(int level)
+    {
+        PlayerPrefs.SetInt("levelNumber", level);
+    }
+
+    //delets everything from save
+    public void Delete()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+
 }
-*/

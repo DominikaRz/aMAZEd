@@ -11,6 +11,8 @@ TagManager:
   - Health
   - Story
   - PlayerCamera
+  - Interior
+  - Exterior
   layers:
   - Default
   - TransparentFX
