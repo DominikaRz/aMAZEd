@@ -809,7 +809,7 @@ GameObject:
   - component: {fileID: 6240052809555446351}
   - component: {fileID: -4695679779398688281}
   - component: {fileID: 6912579952118162297}
-  - component: {fileID: 3097290069188461295}
+  - component: {fileID: 818235979511508334}
   m_Layer: 7
   m_Name: Zombie3
   m_TagString: Untagged
@@ -912,7 +912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b2c06d01920a84499d6dceae15d921, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3097290069188461295
+--- !u!114 &818235979511508334
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -921,11 +921,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4803014352389650695}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32a584dae1c3e964787cab032920f71e, type: 3}
+  m_Script: {fileID: 11500000, guid: d485fa36531987c4491b185fe5a7667a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 0.6
-  attackDamage: 0.2
+  fastAttackRange: 0.6
+  fastMovementSpeed: 1
+  attackDamage: 0.3
 --- !u!1 &4956532458698703312
 GameObject:
   m_ObjectHideFlags: 0

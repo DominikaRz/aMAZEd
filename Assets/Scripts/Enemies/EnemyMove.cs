@@ -2,7 +2,12 @@
 EnemyMove cs should handle the movement logic, specifically how zombies navigate the maze
 and interact with the player. This includes following the player,
 attacking, and possibly retreating or other complex movements.
+
+They only attac when they see the player.
  */
+
+
+
 
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,7 +20,13 @@ public class EnemyMove : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator; // Reference to the Animator component
     public float attackRange = 0.6f; // Attack range for the zombie
-    public float attackDamage = 0.2f; // Variable for damage inflicted by the enemy
+    public float sightRange = 10f; // Sight range for spotting the player
+    public float wanderRadius = 5f; // Radius for random wandering
+    
+    public float attackDamage = 0.2f;
+    public float wanderTimer = 5f; // Time interval for changing wander destination
+
+    private float timer; // To keep track of wandering time
 
     private void Start()
     {
@@ -27,117 +38,78 @@ public class EnemyMove : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>(); // Get the Animator component
+
+        timer = wanderTimer; // Initialize timer
     }
 
     void Update()
     {
         if (player != null && agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
-            // Continuously update the destination to the player's position
-            agent.SetDestination(player.position);
+            float distance = Vector3.Distance(transform.position, player.position);
 
-            LookAtPlayer();
-
-            // Check the distance to the player and attack if in range
-            if (Vector3.Distance(transform.position, player.position) <= attackRange)
+            // Check for line of sight
+            if (distance <= sightRange && CanSeePlayer())
             {
-                animator.SetTrigger("Attack"); // Trigger the attack animation
+                // Player is in sight range and visible
+                agent.SetDestination(player.position);
+                LookAtPlayer();
 
-                /**/
-
-                // Safely call the TakeDamage method on the player
-                PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
+                // Check the distance to the player and attack if in range
+                if (distance <= attackRange)
                 {
-                    playerHealth.TakeDamage(attackDamage);
+                    AttackPlayer();
                 }
-                else
-                {
-                    Debug.LogError("PlayerHealth component not found on the player!");
-                }
-
             }
-            //else
-            //{
-            //    animator.SetTrigger("Walk"); // Trigger the walk when player isn't near
-            //}
+            else
+            {
+                // Player is not in sight, wander around
+                Wander();
+            }
         }
 
-        // Fixing the enemy floating (existing code)
+        FixFloating();
+    }
+
+    private bool CanSeePlayer()
+    {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit))
+        Vector3 direction = player.position - transform.position;
+
+        if (Physics.Raycast(transform.position, direction, out hit, sightRange))
         {
-            // Assuming the maze's floor is at y = 0
-            float groundHeight = hit.point.y;
-            Vector3 currentPosition = transform.position;
-            currentPosition.y = groundHeight;
-            transform.position = currentPosition;
+            if (hit.transform == player)
+            {
+                return true; // Player is in line of sight
+            }
         }
+        return false; // No line of sight to player
     }
 
-    private void LookAtPlayer()
+    private void Wander()
     {
-        if (player != null)
+        timer += Time.deltaTime;
+
+        if (timer >= wanderTimer)
         {
-            Vector3 direction = player.position - transform.position;
-            direction.y = 0; // Keep the zombie upright, ignore vertical difference
-            Quaternion rotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5.0f); // Smooth rotation towards the player
+            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+            agent.SetDestination(newPos);
+            timer = 0;
         }
     }
-}
 
-
-/*
-
-using UnityEngine;
-using UnityEngine.AI;
-
-public class enemymove : MonoBehaviour
-{
-    private Transform player;
-    private NavMeshAgent agent;
-    private Animator animator; // Reference to the Animator component
-
-    public float attackRange; // Variable for attack range
-    public float attackDamage; // Variable for damage inflicted by the enemy
-    private bool playerInAttackRange; // This should be updated based on your game logic
-
-    private void Start()
+    private static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
-        //get the player object
-        GameObject playerObject = GameObject.FindWithTag("Player");
-        if (playerObject != null) {  player = playerObject.transform; }
+        Vector3 randDirection = Random.insideUnitSphere * dist;
 
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        randDirection += origin;
+        NavMeshHit navHit;
+
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+
+        return navHit.position;
     }
 
-    void Update()
-    {
-        if (player != null && agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
-        {
-            // Continuously update the destination to the player's position
-            agent.SetDestination(player.position);
-            LookAtPlayer();
-
-            playerInAttackRange = Vector3.Distance(player.position, transform.position) <= attackRange;
-            if (playerInAttackRange){ AttackPlayer(); }
-        }
-
-       
-        
-        //fixing the enemy floating:
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit))
-        {
-            // Assuming the maze's floor is at y = 0
-            float groundHeight = hit.point.y;
-            Vector3 currentPosition = transform.position;
-            currentPosition.y = groundHeight;
-            transform.position = currentPosition;
-        }
-    }
     private void LookAtPlayer()
     {
         if (player != null)
@@ -151,23 +123,28 @@ public class enemymove : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // Trigger the attack animation
-        animator.SetTrigger("Attack");
-        //Debug.Log("Attack animation trigger");
-
-        /*
-        // Safely call the TakeDamage method on the player
+        animator.SetTrigger("Attack"); // Trigger the attack animation
+        // Implement attack logic here
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(attackDamage);
         }
-        else
-        {
-            Debug.LogError("PlayerHealth component not found on the player!");
-        }
-        *//*
     }
 
+    private void FixFloating()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, -Vector3.up, out hit))
+        {
+            float groundHeight = hit.point.y;
+            Vector3 currentPosition = transform.position;
+            currentPosition.y = groundHeight;
+            transform.position = currentPosition;
+        }
+    }
+}
 
-} */
+
+
+
