@@ -8,9 +8,9 @@ using UnityEngine;
 
 public class ZombieFast : MonoBehaviour
 {
-
+    /*
     private MazeCell currentCell;
-    private MazeCell targetCell;
+    //private MazeCell targetCell;
 
     public void SetLocation(MazeCell cell)
     {
@@ -21,6 +21,6 @@ public class ZombieFast : MonoBehaviour
         currentCell = cell;
         transform.localPosition = cell.transform.localPosition;
         currentCell.OnPlayerEntered();
-        targetCell = null;
-    }
+        //targetCell = null;
+    } */
 }

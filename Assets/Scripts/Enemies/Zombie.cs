@@ -5,10 +5,10 @@ using UnityEngine;
 public class Zombie : MonoBehaviour
 {
 
-    private MazeCell currentCell;
-    private MazeCell targetCell;
+    //private MazeCell currentCell;
+    //private MazeCell targetCell;
 
-    public void SetLocation(MazeCell cell)
+    /*public void SetLocation(MazeCell cell)
     {
         if (currentCell != null)
         {
@@ -17,6 +17,8 @@ public class Zombie : MonoBehaviour
         currentCell = cell;
         transform.localPosition = cell.transform.localPosition;
         currentCell.OnPlayerEntered();
-        targetCell = null;
-    }
+        //targetCell = null;
+    }*/
+    
+
 }

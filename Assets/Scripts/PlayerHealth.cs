@@ -49,7 +49,14 @@ public class PlayerHealth : MonoBehaviour
     public void RestoreHealth(float amount)
     {
         currentHealth += amount;
-
         hudManager.OnHealthChanged(currentHealth);
+    }
+
+    public void SetHealthTo100(){
+        currentHealth = 100;
+    }
+
+    public float getHealthValue(){
+        return this.currentHealth;
     }
 }
