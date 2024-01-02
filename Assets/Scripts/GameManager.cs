@@ -58,11 +58,18 @@ public class GameManager : MonoBehaviour
     private float maxSpawnDistanceFromPlayer;
     private float minSpawnDistanceFromPlayer; // Minimum distance from the player to spawn zombies
 
+    private List<IntVector2> restrictedCoordinates;
+
     private void Start()
     {
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
+
+        
+        MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
+        restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
+        
     }
 
     private void Update()
@@ -134,9 +141,6 @@ public class GameManager : MonoBehaviour
             numberOfFastZombies = 1;
             numberOfHealths = 6;
             numberOfStories = 0; */
-            distance = 7;
-            minSpawnDistanceFromPlayer = 3.0f;
-            maxSpawnDistanceFromPlayer = (float)(distance - 1);
             mazeInstance.size = new IntVector2(7, 7);
             mazeInstance.roomExpansionChance = 0.4f;
             numberOfKeys = 5;
@@ -216,7 +220,9 @@ public class GameManager : MonoBehaviour
             SetupCamera();
             Debug.Log("Maze generated!!!");
         }
-        
+        //yield return new WaitForSeconds(9);
+        yield return new WaitUntil(() => cutsceneDirector.state != PlayState.Playing);
+
         cutsceneDirector.Stop();
         Debug.Log("First cutscene stopped.");
 
@@ -229,12 +235,13 @@ public class GameManager : MonoBehaviour
 
             // Wait for the second cutscene to finish
             yield return new WaitUntil(() => cutsceneDirector2.state != PlayState.Playing);
+            //yield return new WaitForSeconds(5);
             cutsceneDirector2.Stop();
         }
         
         // Instantiate the zombies
         SpawnZombies(numberOfZombies);
-        SpawnFastZombies(numberOfFastZombies);
+        //SpawnFastZombies(numberOfFastZombies);
 
 
         Camera.main.clearFlags = CameraClearFlags.Depth;
@@ -323,6 +330,11 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void DeleteSave()
+    {
+        saveLevelInstance.Delete();
+    }
     /**/
 
     private void PlaceEntryAndExitRooms() {
@@ -347,7 +359,7 @@ public class GameManager : MonoBehaviour
     // Adjustments for spawning and door handling
     
 
-/*
+    /*
     private void SpawnZombies(int count)
     {
 
@@ -369,6 +381,7 @@ public class GameManager : MonoBehaviour
         }
     }*/
 
+    /*
     private void SpawnZombies(int count)
     {
         for (int i = 0; i < count; i++)
@@ -393,6 +406,28 @@ public class GameManager : MonoBehaviour
             zombiefInstance = Instantiate(zombiefPrefab, cell.transform.position, Quaternion.identity) as ZombieFast;
             zombiefInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
         }
+    } */
+
+    private void SpawnZombies(int count) {
+    for (int i = 0; i < count; i++) {
+        MazeCell cell;
+        do {
+            cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+        } while (IsRestrictedCoordinate(cell.coordinates));
+
+        Zombie zombieInstance = Instantiate(zombiePrefab, cell.transform.position, Quaternion.identity) as Zombie;
+        zombieInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
+    }
+}
+
+    // Add this method to check if the generated coordinates are restricted
+    private bool IsRestrictedCoordinate(IntVector2 coordinates) {
+        foreach (var restrictedCoord in restrictedCoordinates) {
+            if (coordinates.x == restrictedCoord.x && coordinates.z == restrictedCoord.z) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void SpawnKeys(int count)
@@ -460,6 +495,8 @@ public class GameManager : MonoBehaviour
         saveLevelInstance.SaveLvl(level + 1);
 
         RestartGame();
+
+        //SceneManager.LoadScene(scenename);
         /*
         
 

@@ -188,5 +188,29 @@ public class Maze : MonoBehaviour {
 		rooms.Add(newRoom);
 		return newRoom;
 	}
+
+//
+	public List<IntVector2> GetRoomCoordinates(MazeCell startCell) {
+        var visited = new HashSet<MazeCell>();
+        var coordinates = new List<IntVector2>();
+        CollectRoomCoordinates(startCell, visited, coordinates);
+        return coordinates;
+    }
+
+    private void CollectRoomCoordinates(MazeCell cell, HashSet<MazeCell> visited, List<IntVector2> coordinates) {
+        if (cell == null || visited.Contains(cell)) {
+            return;
+        }
+
+        visited.Add(cell);
+        coordinates.Add(cell.coordinates); // Assuming MazeCell has a coordinates property
+
+        foreach (var neighbor in cell.neighbors) {
+            if (neighbor != null && neighbor.room == cell.room) {
+                CollectRoomCoordinates(neighbor, visited, coordinates);
+            }
+        }
+    }
+
 }
 

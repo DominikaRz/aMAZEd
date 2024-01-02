@@ -5,6 +5,8 @@ public class MazeCell : MonoBehaviour {
 	public IntVector2 coordinates;
 
 	public MazeRoom room;
+	
+    public MazeCell[] neighbors; // Array of neighboring cells
 
 	private MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
 
