@@ -6,6 +6,7 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth = 100;
     private float currentHealth;
     private HUDManager hudManager;
+    public Player playerInstance;
     //public float CurrentHealth { get { return currentHealth; } }
 
     private void Start()
@@ -27,16 +28,16 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        currentHealth -= amount;
-
-        Debug.Log($"PlayerHealth: {currentHealth}");
-        hudManager.OnHealthChanged(currentHealth);
-
-
-        if (currentHealth <= 0)
+        if(currentHealth > 0){
+            currentHealth -= amount;
+            Debug.Log($"PlayerHealth: {currentHealth}");
+            hudManager.OnHealthChanged(currentHealth);
+        }
+        else
         {
             if (DeathScreen.Instance != null)
             {
+                playerInstance.Death();
                 DeathScreen.Instance.ShowDeathScreen();
             }
             else

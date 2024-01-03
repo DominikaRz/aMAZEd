@@ -72,8 +72,9 @@ public class PauseMenu : MonoBehaviour
     {
         Debug.Log("Quit function called.");
 
-        Application.Quit();
-        EventSystem.current.SetSelectedGameObject(null);
+        //Application.Quit();
+        //EventSystem.current.SetSelectedGameObject(null);
+        SceneManager.LoadScene("Main");
 
     }
 }

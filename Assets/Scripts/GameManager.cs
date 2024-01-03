@@ -54,11 +54,10 @@ public class GameManager : MonoBehaviour
     public int numberOfStories = 0;
     public int level=1;
 
-    private int distance;
-    private float maxSpawnDistanceFromPlayer;
-    private float minSpawnDistanceFromPlayer; // Minimum distance from the player to spawn zombies
+    //private int distance;
+    private float minSpawnDistanceFromPlayer = 4f; // Minimum distance from the player to spawn zombies
 
-    private List<IntVector2> restrictedCoordinates;
+    //private List<IntVector2> restrictedCoordinates;
 
     private void Start()
     {
@@ -66,9 +65,10 @@ public class GameManager : MonoBehaviour
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
 
+        //MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
+        //restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
         
-        MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
-        restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
+        //restrictedCoordinates = GetRoomCoordinatesBasedOnCell(new IntVector2(1, 0));
         
     }
 
@@ -124,7 +124,8 @@ public class GameManager : MonoBehaviour
         else if (level == 2) 
         {
             mazeInstance.size = new IntVector2(6, 6);
-            mazeInstance.roomExpansionChance = 0.4f; 
+            mazeInstance.roomExpansionChance = 0.4f;
+            minSpawnDistanceFromPlayer = 3f; 
             numberOfKeys = 2;
             numberOfZombies = 1;
             numberOfFastZombies = 0;
@@ -145,7 +146,7 @@ public class GameManager : MonoBehaviour
             mazeInstance.roomExpansionChance = 0.4f;
             numberOfKeys = 5;
             numberOfZombies = 3;
-            numberOfFastZombies = 3;
+            numberOfFastZombies = 10;
             numberOfHealths = 26;
             numberOfStories = 0;
         }
@@ -241,7 +242,7 @@ public class GameManager : MonoBehaviour
         
         // Instantiate the zombies
         SpawnZombies(numberOfZombies);
-        //SpawnFastZombies(numberOfFastZombies);
+        SpawnFastZombies(numberOfFastZombies);
 
 
         Camera.main.clearFlags = CameraClearFlags.Depth;
@@ -301,13 +302,13 @@ public class GameManager : MonoBehaviour
         }
 
         SaveData saveData = new SaveData();
-    //number of level
+     //number of level
         saveData.levelNumber = level;
-    //player position    
+     //player position    
         saveData.playerPositionX = playerInstance.transform.position.x;
         saveData.playerPositionY = playerInstance.transform.position.y;
         saveData.playerPositionZ = playerInstance.transform.position.z;
-    //number of keyes
+     //number of keyes
         saveData.numberOfCollectedKeyes = playerInstance.keysCollected;
         
         saveLevelInstance.Save(saveData);
@@ -330,11 +331,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
-    public void DeleteSave()
-    {
-        saveLevelInstance.Delete();
-    }
     /**/
 
     private void PlaceEntryAndExitRooms() {
@@ -356,79 +352,35 @@ public class GameManager : MonoBehaviour
     
 
     
-    // Adjustments for spawning and door handling
-    
-
-    /*
-    private void SpawnZombies(int count)
-    {
-
-        for (int i = 0; i < count; i++)
-        {
+    private void SpawnZombies(int count) {
+        for (int i = 0; i < count; i++) {
             MazeCell cell = null;
             float distance;
-            do
-            {
+            do {
                 cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
                 distance = Vector3.Distance(playerInstance.transform.position, cell.transform.position);
-            }
-            while (distance < minSpawnDistanceFromPlayer); // Keep looking for a cell that is far enough from the player
-
-            zombieInstance = Instantiate(zombiePrefab) as Zombie;
-            // Add a random offset within the cell
-            zombieInstance.SetLocation(cell);
-            zombieInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
-        }
-    }*/
-
-    /*
-    private void SpawnZombies(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            //float dist = Random.Range(minSpawnDistanceFromPlayer, maxSpawnDistanceFromPlayer);
-            //Debug.Log($"Dist: {dist}");
-            MazeCell cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+            } while (distance < minSpawnDistanceFromPlayer);
 
             Zombie zombieInstance = Instantiate(zombiePrefab, cell.transform.position, Quaternion.identity) as Zombie;
-            //Debug.Log($"Cell: {cell}");
-            //Debug.Log($"Distan: {distan}");
             zombieInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
         }
     }
 
-    private void SpawnFastZombies(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            MazeCell cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+    private void SpawnFastZombies(int count) {
+        for (int i = 0; i < count; i++) {
+            MazeCell cell = null;
+            float distance;
+            do {
+                cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+                distance = Vector3.Distance(playerInstance.transform.position, cell.transform.position);
+            } while (distance < minSpawnDistanceFromPlayer);
 
             zombiefInstance = Instantiate(zombiefPrefab, cell.transform.position, Quaternion.identity) as ZombieFast;
             zombiefInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
         }
-    } */
-
-    private void SpawnZombies(int count) {
-    for (int i = 0; i < count; i++) {
-        MazeCell cell;
-        do {
-            cell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
-        } while (IsRestrictedCoordinate(cell.coordinates));
-
-        Zombie zombieInstance = Instantiate(zombiePrefab, cell.transform.position, Quaternion.identity) as Zombie;
-        zombieInstance.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f); // Adjust these values as needed
     }
-}
 
-    // Add this method to check if the generated coordinates are restricted
-    private bool IsRestrictedCoordinate(IntVector2 coordinates) {
-        foreach (var restrictedCoord in restrictedCoordinates) {
-            if (coordinates.x == restrictedCoord.x && coordinates.z == restrictedCoord.z) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     private void SpawnKeys(int count)
     {

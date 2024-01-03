@@ -212,5 +212,15 @@ public class Maze : MonoBehaviour {
         }
     }
 
+//
+	//private MazeCell[,] cells; // Assuming this is your array of cells
+
+    public MazeCell GetCellLift(IntVector2 coordinates) {
+        if (coordinates.x >= 0 && coordinates.x < size.x && coordinates.z >= 0 && coordinates.z < size.z) {
+            return cells[coordinates.x, coordinates.z];
+        }
+        return null;
+    }
+
 }
 

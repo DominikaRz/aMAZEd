@@ -9,8 +9,6 @@ public class MazeRoom : ScriptableObject {
 	
 	private List<MazeCell> cells = new List<MazeCell>();
 	
-    //public bool canSpawnEnemies = true; // By default, allow enemies to spawn
-	
 	public void Add (MazeCell cell) {
 		cell.room = this;
 		cells.Add(cell);
@@ -30,6 +28,7 @@ public class MazeRoom : ScriptableObject {
 		}
 	}
 	*/
+
 }
 
 [System.Serializable]
