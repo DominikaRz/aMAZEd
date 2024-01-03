@@ -29,6 +29,7 @@ public class DeathScreen : MonoBehaviour
     {
         gameObject.SetActive(true); // Show the dark panel
         StartCoroutine(ShowOptionsAfterDelay(4f)); // Wait 10 seconds to show options
+        
     }
 
     private IEnumerator ShowOptionsAfterDelay(float delay)

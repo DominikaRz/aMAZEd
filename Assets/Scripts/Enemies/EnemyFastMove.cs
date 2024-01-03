@@ -18,6 +18,9 @@ public class EnemyFastMove : MonoBehaviour
     public float fastMovementSpeed = 1.0f;
     public float attackDamage = 0.3f; // This could be different for the FastZombie
 
+
+    //public float stoppingDistance = 0.9f;
+
     private void Start()
     {
         GameObject playerObject = GameObject.FindWithTag("Player");
@@ -27,6 +30,9 @@ public class EnemyFastMove : MonoBehaviour
         }
 
         agent = GetComponent<NavMeshAgent>();
+        //agent.stoppingDistance = stoppingDistance;
+        // Enable local avoidance
+        //agent.avoidancePriority = Random.Range(50, 100);
         animator = GetComponent<Animator>(); // Get the Animator component
 
         // Set the movement speed to be faster for the FastZombie
@@ -47,7 +53,7 @@ public class EnemyFastMove : MonoBehaviour
                 PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    playerHealth.TakeDamage(attackDamage);
+                    //playerHealth.TakeDamage(attackDamage);
                 }
             }
             else

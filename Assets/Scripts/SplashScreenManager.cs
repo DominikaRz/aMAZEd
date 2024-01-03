@@ -5,7 +5,7 @@ using System.Collections;
 public class SplashScreenManager : MonoBehaviour
 {
     public float splashScreenDuration = 3f; // Duration of the splash screen in seconds
-    public string mainSceneName = "MainGame"; // The name of the main game scene
+    public string mainSceneName = "Main"; // The name of the main game scene
 
     private IEnumerator Start()
     {

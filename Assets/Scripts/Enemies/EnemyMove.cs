@@ -28,6 +28,8 @@ public class EnemyMove : MonoBehaviour
 
     private float timer; // To keep track of wandering time
 
+    public float stoppingDistance = 0.8f;
+
     private void Start()
     {
         GameObject playerObject = GameObject.FindWithTag("Player");
@@ -37,9 +39,14 @@ public class EnemyMove : MonoBehaviour
         }
 
         agent = GetComponent<NavMeshAgent>();
+        agent.stoppingDistance = stoppingDistance;
+        // Enable local avoidance
+        agent.avoidancePriority = Random.Range(0, 100);
+
         animator = GetComponent<Animator>(); // Get the Animator component
 
         timer = wanderTimer; // Initialize timer
+
     }
 
     void Update()
@@ -88,6 +95,7 @@ public class EnemyMove : MonoBehaviour
 
     private void Wander()
     {
+        animator.SetTrigger("Walk");
         timer += Time.deltaTime;
 
         if (timer >= wanderTimer)

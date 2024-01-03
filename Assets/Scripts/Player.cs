@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 
     public int keysCollected = 0;
     private GameManager gameManager;
+    public Camera playerCamera;
 
     private StoryDisplay storyDisplay;
     private HUDManager hudManager;
@@ -63,6 +64,11 @@ public class Player : MonoBehaviour
             Debug.LogWarning("ElevatorDoorsController script not found in the scene.");
         }
         storyDisplay = FindObjectOfType<StoryDisplay>();
+
+        GameObject cameraGameObject = GameObject.FindWithTag("PlayerCamera");
+        if (cameraGameObject != null) {
+            playerCamera = cameraGameObject.GetComponent<Camera>();
+        }
 
     }
 
@@ -148,15 +154,11 @@ public class Player : MonoBehaviour
             Debug.Log("Collected half of keyes!");
             OpenElevatorDoor();
             if (distanceToElevator <= 1){
-                //textManager.SetMessage("Press Enter to leave"); // Set an initial message
-                //enterText.gameObject.SetActive(true); // Show the text when near the elevator
-                //textManager.ShowText(); // To show the text
                 storyDisplay.message = "Press ENTER to continue";
                 storyDisplay.DisplayMessage();
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
                     gameManager.NewLevel(); // Call the NextLevel method when Enter is pressed
-                    //gameManager.RestartGame(); // Call the NextLevel method when Enter is pressed
                 }
                 else
                 {
@@ -372,10 +374,39 @@ public class Player : MonoBehaviour
         }
     }
 
+    public float fallDuration = 2.0f; // Time in seconds over which the fall occurs
+    public float nearGroundYPosition = 0.74f; // The Y position near the ground
 
 
+    public void Death(){
+        scavengerAnimator.SetTrigger("Death");
+
+        useMouseRotation = false;
+
+        float elapsedTime = 0;
+        Vector3 startPosition = transform.position; // Camera's current position
+        Quaternion startRotation = transform.rotation; // Camera's current rotation
+
+        // Keep the same X and Z positions but change Y to near-ground level
+        Vector3 endPosition = new Vector3(startPosition.x, nearGroundYPosition, startPosition.z);
+        // Rotate to look straight up
+        Quaternion endRotation = Quaternion.Euler(97, -168f, 7f);
+
+        while (elapsedTime < fallDuration) {
+            float ratio = elapsedTime / fallDuration;
+
+            // Interpolate position and rotation over time
+            transform.position = Vector3.Lerp(startPosition, endPosition, ratio);
+            transform.rotation = Quaternion.Slerp(startRotation, endRotation, ratio);
+
+            elapsedTime += Time.deltaTime;
+        }
+
+        // Ensure final position and rotation are set
+        transform.position = endPosition;
+        transform.rotation = endRotation;
+    }
     
-
 }
 
 public class PlayerSpawn : MonoBehaviour

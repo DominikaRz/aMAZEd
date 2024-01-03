@@ -3145,19 +3145,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 105028211771648798, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 260.60196
+      value: 260.9684
       objectReference: {fileID: 0}
     - target: {fileID: 105028211771648798, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.16449928
+      value: 0.4790001
       objectReference: {fileID: 0}
     - target: {fileID: 105028211771648798, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99539626
+      value: 0.9396927
       objectReference: {fileID: 0}
     - target: {fileID: 105028211771648798, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.095845714
+      value: 0.3420201
       objectReference: {fileID: 0}
     - target: {fileID: 343076753755074724, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_SceneBindings.Array.size
@@ -3341,19 +3341,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6978214591335958296, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 260.60196
+      value: 260.9684
       objectReference: {fileID: 0}
     - target: {fileID: 6978214591335958296, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.16449928
+      value: 0.4790001
       objectReference: {fileID: 0}
     - target: {fileID: 6978214591335958296, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99539626
+      value: 0.9396927
       objectReference: {fileID: 0}
     - target: {fileID: 6978214591335958296, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.095845714
+      value: 0.3420201
       objectReference: {fileID: 0}
     - target: {fileID: 7737312046419807751, guid: 3190c660b949b4343880870623931d50, type: 3}
       propertyPath: m_Constraints
