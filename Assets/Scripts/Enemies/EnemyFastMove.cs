@@ -53,7 +53,7 @@ public class EnemyFastMove : MonoBehaviour
                 PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    //playerHealth.TakeDamage(attackDamage);
+                    playerHealth.TakeDamage(attackDamage);
                 }
             }
             else
