@@ -53,7 +53,8 @@ public class EnemyFastMove : MonoBehaviour
                 PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    //playerHealth.TakeDamage(attackDamage);
+                    playerHealth.TakeDamage(attackDamage);
+
                 }
             }
             else
@@ -83,6 +84,7 @@ public class EnemyFastMove : MonoBehaviour
             direction.y = 0; // Keep the zombie upright, ignore vertical difference
             Quaternion rotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5.0f); // Smooth rotation towards the player
+
         }
     }
 }

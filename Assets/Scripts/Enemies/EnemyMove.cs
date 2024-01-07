@@ -29,7 +29,8 @@ public class EnemyMove : MonoBehaviour
     private float timer; // To keep track of wandering time
 
     public float stoppingDistance = 0.8f;
-
+    public AudioSource attackAudioSource; // Assign this in the inspector
+    public AudioSource seeAudioSource;
     private void Start()
     {
         GameObject playerObject = GameObject.FindWithTag("Player");
@@ -87,7 +88,10 @@ public class EnemyMove : MonoBehaviour
         {
             if (hit.transform == player)
             {
+                seeAudioSource.Play(); // Play the attack sound
+
                 return true; // Player is in line of sight
+
             }
         }
         return false; // No line of sight to player
@@ -129,14 +133,28 @@ public class EnemyMove : MonoBehaviour
         }
     }
 
+    //private void AttackPlayer()
+    //{
+    //    animator.SetTrigger("Attack"); // Trigger the attack animation
+    //    // Implement attack logic here
+    //    PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+    //    if (playerHealth != null)
+    //    {
+    //        playerHealth.TakeDamage(attackDamage);
+    //    }
+    //}
     private void AttackPlayer()
     {
         animator.SetTrigger("Attack"); // Trigger the attack animation
-        // Implement attack logic here
+                                       
+
+
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(attackDamage);
+            attackAudioSource.Play(); // Play the attack sound
+
         }
     }
 

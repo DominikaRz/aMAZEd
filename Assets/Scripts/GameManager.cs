@@ -60,19 +60,19 @@ public class GameManager : MonoBehaviour
     //private List<IntVector2> restrictedCoordinates;
 
     private void Start()
-    {
+    {   
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
 
-        //MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
-        //restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
-        
-        //restrictedCoordinates = GetRoomCoordinatesBasedOnCell(new IntVector2(1, 0));
-        
-    }
+    //MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
+    //restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
 
-    private void Update()
+    //restrictedCoordinates = GetRoomCoordinatesBasedOnCell(new IntVector2(1, 0));
+
+}
+
+private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F5) || Input.GetKeyDown(KeyCode.L))
         {
@@ -118,59 +118,51 @@ public class GameManager : MonoBehaviour
             numberOfKeys = 2; 
             numberOfZombies = 0; 
             numberOfFastZombies = 0; 
-            numberOfHealths = 0;
-            numberOfStories = 0; 
+            numberOfHealths = 1;
+            numberOfStories = 1; 
         }
         else if (level == 2) 
         {
-            mazeInstance.size = new IntVector2(6, 6);
+            mazeInstance.size = new IntVector2(5, 5);
             mazeInstance.roomExpansionChance = 0.4f;
             minSpawnDistanceFromPlayer = 3f; 
             numberOfKeys = 2;
             numberOfZombies = 1;
             numberOfFastZombies = 0;
-            numberOfHealths = 3; 
+            numberOfHealths = 2; 
             numberOfStories = 0; 
         }
         else if (level == 3)
         {
-            /*
-            mazeInstance.size = new IntVector2(7, 7);
+            mazeInstance.size = new IntVector2(5, 5);
             mazeInstance.roomExpansionChance = 0.4f;
-            numberOfKeys = 2;
-            numberOfZombies = 0;
-            numberOfFastZombies = 1;
-            numberOfHealths = 6;
-            numberOfStories = 0; */
-            mazeInstance.size = new IntVector2(7, 7);
-            mazeInstance.roomExpansionChance = 0.4f;
-            numberOfKeys = 5;
+            numberOfKeys = 3;
             numberOfZombies = 3;
-            numberOfFastZombies = 10;
-            numberOfHealths = 26;
+            numberOfFastZombies = 0;
+            numberOfHealths = 3;
             numberOfStories = 0;
         }
         else if (level == 4) 
         {
-            mazeInstance.size = new IntVector2(7, 7);
+            mazeInstance.size = new IntVector2(6, 6);
             mazeInstance.roomExpansionChance = 0.4f;
-            numberOfKeys = 2; 
-            numberOfZombies = 1; 
+            numberOfKeys = 4; 
+            numberOfZombies = 3; 
             numberOfFastZombies = 1; 
-            numberOfHealths = 6; 
-            numberOfStories = 1; 
+            numberOfHealths = 4; 
+            numberOfStories = 2; 
         }
        //other levels
         else
         {
             // For higher levels, increase maze size and number of zombies slightly
-            int sizeIncrease = level % 10; // The amount by which to increase the maze size and zombie count
-            mazeInstance.size = new IntVector2(5 + (int)(sizeIncrease * 0.1f), 5 + (int)(sizeIncrease * 0.1f));
-            numberOfKeys = 3 * (int)(sizeIncrease * Random.Range(0.2f, 2f)); // The default number of keys for higher levels
-            numberOfZombies = 1 + (int)(sizeIncrease * 0.5f); // Increase number of zombies
-            numberOfFastZombies = 1 + (int)(sizeIncrease * 0.2f); // Increase number of fast zombies, half the rate of regular zombies
-            numberOfHealths = (int)(numberOfFastZombies * 0.4f) + (int)(numberOfZombies * 0.2f); // The default number of health pickups for higher levels
-            numberOfStories = (int)(Random.Range(0, 7) / sizeIncrease); // The default number of story items for higher levels
+            int sizeIncrease = level % 10;
+            mazeInstance.size = new IntVector2(1 + (int)(sizeIncrease), 1 + (int)(sizeIncrease));
+            numberOfKeys = (int)(sizeIncrease*1.5f); 
+            numberOfZombies = 1 + (int)(sizeIncrease * 0.5f);
+            numberOfFastZombies = 1 + (int)(sizeIncrease * 0.19f);
+            numberOfHealths = (int)(sizeIncrease);
+            numberOfStories = (int)(sizeIncrease) - 2;
             mazeInstance.roomExpansionChance = 0.4f + 0.0005f * (sizeIncrease % 10); // Increase room expansion probability
         }
 
@@ -440,7 +432,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
     }
-    
+
     public void NewLevel()
     {
         //save the number of current level
@@ -502,7 +494,7 @@ public class GameManager : MonoBehaviour
         //BeginGame();
     }
 
-   
+
 
 
 }
