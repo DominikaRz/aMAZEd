@@ -1,28 +1,28 @@
 using UnityEngine;
 
 public class Key : MonoBehaviour
-{/*
+{
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Player player = other.GetComponent<Player>();
-            if (player != null)
+            Player playerComponent = other.GetComponent<Player>();
+            if (playerComponent != null)
             {
-                player.AddKey(this);
-                Destroy(gameObject); // Destroys the key GameObject
+                playerComponent.AddKey(this);
+
+                audioSource.Play();
+
+                // Destroy the key GameObject after the sound finished playing
+                Destroy(gameObject, audioSource.clip.length);
             }
-        }
-    }*/
-
-    
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            other.GetComponent<Player>().AddKey(this);
-
-            Destroy(gameObject);
         }
     }
 }
