@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     public Player playerPrefab;
     private Player playerInstance;
     private Camera playerCamera;
+    public Torch torchInstance;
 
 
     private Zombie zombieInstance;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     public static int numberOfKeys = 3;
     public static int numberOfHealths = 2;
+    public static int numberOfLighters = 3;
 
     private SaveLevel saveLevelInstance;
 
@@ -54,25 +56,17 @@ public class GameManager : MonoBehaviour
     public int numberOfStories = 0;
     public int level=1;
 
-    //private int distance;
     private float minSpawnDistanceFromPlayer = 4f; // Minimum distance from the player to spawn zombies
-
-    //private List<IntVector2> restrictedCoordinates;
 
     private void Start()
     {   
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
+        
+    }
 
-    //MazeCell someCell = mazeInstance.GetCell(new IntVector2(1, 0)); // Replace x and y with specific coordinates
-    //restrictedCoordinates = mazeInstance.GetRoomCoordinates(someCell);
-
-    //restrictedCoordinates = GetRoomCoordinatesBasedOnCell(new IntVector2(1, 0));
-
-}
-
-private void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F5) || Input.GetKeyDown(KeyCode.L))
         {
@@ -83,11 +77,6 @@ private void Update()
         {
             //mazeInstance.ToggleDoorsInRoom(false); // Close all doors in the current room
         }
-
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-			//NewLevel();
-		}
 
     }
 
@@ -109,23 +98,30 @@ private void Update()
         { 
             level = 1;
             saveLevelInstance.SaveLvl(level);
+            saveLevelInstance.SetEndLevelNumber();
         }
+
+        //torch.GetComponent<burnOutTime>();
        //tutorial levels 
         if (level == 1) // Assuming the first level is represented by 1
         {
-            mazeInstance.size = new IntVector2(5, 5); 
+            mazeInstance.size = new IntVector2(5, 5);
+            numberOfLighters = 3; 
             mazeInstance.roomExpansionChance = 0.5f; 
+            torchInstance.SetBurnOutTime(60.0f);
             numberOfKeys = 2; 
             numberOfZombies = 0; 
             numberOfFastZombies = 0; 
-            numberOfHealths = 1;
-            numberOfStories = 1; 
+            numberOfHealths = 0;
+            numberOfStories = 0; 
         }
         else if (level == 2) 
         {
-            mazeInstance.size = new IntVector2(5, 5);
+            mazeInstance.size = new IntVector2(6, 6);
             mazeInstance.roomExpansionChance = 0.4f;
+            numberOfLighters = 5; 
             minSpawnDistanceFromPlayer = 3f; 
+            torchInstance.SetBurnOutTime(240.0f);
             numberOfKeys = 2;
             numberOfZombies = 1;
             numberOfFastZombies = 0;
@@ -134,8 +130,9 @@ private void Update()
         }
         else if (level == 3)
         {
-            mazeInstance.size = new IntVector2(5, 5);
+            mazeInstance.size = new IntVector2(7, 7);
             mazeInstance.roomExpansionChance = 0.4f;
+            numberOfLighters = 7; 
             numberOfKeys = 3;
             numberOfZombies = 3;
             numberOfFastZombies = 0;
@@ -146,6 +143,7 @@ private void Update()
         {
             mazeInstance.size = new IntVector2(6, 6);
             mazeInstance.roomExpansionChance = 0.4f;
+            numberOfLighters = 8; 
             numberOfKeys = 4; 
             numberOfZombies = 3; 
             numberOfFastZombies = 1; 
@@ -157,7 +155,8 @@ private void Update()
         {
             // For higher levels, increase maze size and number of zombies slightly
             int sizeIncrease = level % 10;
-            mazeInstance.size = new IntVector2(1 + (int)(sizeIncrease), 1 + (int)(sizeIncrease));
+            numberOfLighters = 5 + (int)(sizeIncrease / 2);
+            mazeInstance.size = new IntVector2(10 + (int)(sizeIncrease), 10 + (int)(sizeIncrease));
             numberOfKeys = (int)(sizeIncrease*1.5f); 
             numberOfZombies = 1 + (int)(sizeIncrease * 0.5f);
             numberOfFastZombies = 1 + (int)(sizeIncrease * 0.19f);
@@ -172,18 +171,17 @@ private void Update()
         Camera.main.clearFlags = CameraClearFlags.Skybox;
         Camera.main.rect = new Rect(0f, 0f, 1f, 1f);
 
-        
         // Instantiate and generate the maze.
         mazeInstance = Instantiate(mazePrefab) as Maze;
 
         // Adjust game settings based on the level
         LevelSettings();
-
+        
         //yield return StartCoroutine(mazeInstance.Generate());
         Coroutine mazeGenerator = StartCoroutine(mazeInstance.Generate());
         //StartCoroutine(mazeInstance.Generate());
         
-
+        //first cutscene 
         if (cutsceneDirector != null)
         {
             cutsceneDirector.Play();
@@ -192,7 +190,7 @@ private void Update()
         Debug.Log("Cutscene should now be playing");
         
 
-        // Ensure the maze generation coroutine has finished as well.
+        //play cutscene while maze is generated
         yield return mazeGenerator;
 
         if (mazeInstance != null)
@@ -221,14 +219,23 @@ private void Update()
 
         // Wait for the second cutscene to finish
         // Begin the second cutscene
+        int endLvl = saveLevelInstance.GetEndLevelNumber();
+
         if (cutsceneDirector2 != null)
         {
+            Debug.Log($"EndLvl: {endLvl}");
+            
             Debug.Log("Second cutscene playing.");
             cutsceneDirector2.Play();
 
+            //if this is the end switch scenes to the end one
+            if(level > endLvl){
+                SceneManager.LoadScene("DockThingEnd");
+            }
             // Wait for the second cutscene to finish
             yield return new WaitUntil(() => cutsceneDirector2.state != PlayState.Playing);
-            //yield return new WaitForSeconds(5);
+            //yield return new WaitForSeconds(5);            
+
             cutsceneDirector2.Stop();
         }
         
@@ -246,7 +253,6 @@ private void Update()
             playerCamera.depth = 2; // Reset the depth to make it the active camera
         }
 
-        
         //storyDisplay.message = "Level: 1, 2, 3, 4, 5, 6, 7, 8, 9 , 0";//+level;
         levelDisplay.message = level.ToString();
         levelDisplay.DisplayMessage();
@@ -435,8 +441,13 @@ private void Update()
 
     public void NewLevel()
     {
+        //check if this is The End
+        int endLvl = saveLevelInstance.GetEndLevelNumber();
+        Debug.Log($"EndLvl: {endLvl}");
+        if(level > endLvl) { SceneManager.LoadScene("DockThingEnd"); }
         //save the number of current level
         saveLevelInstance.SaveLvl(level + 1);
+
 
         RestartGame();
 

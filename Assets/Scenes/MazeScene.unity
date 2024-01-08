@@ -2130,7 +2130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4101126480754714683, guid: 3f22f5462918c4b479db6bc96eb427f2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 338.8
+      value: 416
       objectReference: {fileID: 0}
     - target: {fileID: 8892316970105815219, guid: 3f22f5462918c4b479db6bc96eb427f2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2221,7 +2221,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -91.7, y: 155}
+  m_AnchoredPosition: {x: -91.7, y: 190.6}
   m_SizeDelta: {x: 110, y: 29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1154873444
@@ -3986,6 +3986,10 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6736879684779611032, guid: fdebcfdb8b7b080459bd5203ed0a0fa2, type: 3}
+      propertyPath: torchInstance
+      value: 
+      objectReference: {fileID: 1024938326972377092, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
     - target: {fileID: 6736879684779611032, guid: fdebcfdb8b7b080459bd5203ed0a0fa2, type: 3}
       propertyPath: numberOfStories
       value: 2

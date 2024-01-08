@@ -35,6 +35,7 @@ public class SaveLevel : MonoBehaviour
 
     }
 
+  //level number management
     public int LoadLvl()
     {
         return PlayerPrefs.GetInt("levelNumber");
@@ -42,6 +43,28 @@ public class SaveLevel : MonoBehaviour
     public void SaveLvl(int level)
     {
         PlayerPrefs.SetInt("levelNumber", level);
+    }
+    
+  //lighter number management
+    public int LoadLighterNumber()
+    {
+        return PlayerPrefs.GetInt("lightersNumber");
+    }
+    public void SaveLighterNumber(int lighter)
+    {
+        PlayerPrefs.SetInt("lightersNumber", lighter);
+    }
+
+  //end level number management
+    public void SetEndLevelNumber(){
+        //int endLvl = 2;
+        int endLvl = Random.Range(100, 10000);
+        PlayerPrefs.SetInt("endLevelNumber", endLvl);
+    }
+
+    public int GetEndLevelNumber(){
+        int endLevelNumber = PlayerPrefs.GetInt("endLevelNumber");
+        return endLevelNumber;
     }
 
     //delets everything from save

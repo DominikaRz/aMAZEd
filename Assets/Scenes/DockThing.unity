@@ -1029,6 +1029,8 @@ PlayableDirector:
     value: {fileID: 1510845412}
   - key: {fileID: -7476286436727798286, guid: 83246f0905adc4b1493e6dbef767bb48, type: 2}
     value: {fileID: 484776240}
+  - key: {fileID: 133364079712329240, guid: 83246f0905adc4b1493e6dbef767bb48, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References:
     - 27bc824d6b73c4c618ce958b6f3debbc: {fileID: 1095356102}
@@ -19787,8 +19789,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1157564615}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2588191, y: -0.0000000074505797, z: -0.000000005587935, w: 0.9659258}
-  m_LocalPosition: {x: -15.900002, y: 3.2999997, z: -17.4}
+  m_LocalRotation: {x: -0.057141148, y: 0.5721794, z: -0.040010676, w: -0.81715655}
+  m_LocalPosition: {x: -100.674, y: 6.9269996, z: 1.8919983}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -33589,7 +33591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13965771fec6540b2b260a743f25d651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: MazeScene
+  sceneName: Tutorial
 --- !u!114 &2054439888
 MonoBehaviour:
   m_ObjectHideFlags: 0
