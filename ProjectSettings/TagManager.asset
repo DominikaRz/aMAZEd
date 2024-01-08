@@ -13,6 +13,7 @@ TagManager:
   - PlayerCamera
   - Interior
   - Exterior
+  - Torch
   layers:
   - Default
   - TransparentFX

@@ -4,7 +4,7 @@ public class Torch : MonoBehaviour
 {
     public Light torchLight; // Assign this in the inspector
     public ParticleSystem fireParticleSystem; // Assign this in the inspector
-    public float burnOutTime = 60f; // Total time in seconds for the torch to burn out
+    public float burnOutTime = 120.0f; // Total time in seconds for the torch to burn out
 
     private float initialLightIntensity;
     private float initialEmissionRate;
@@ -24,6 +24,12 @@ public class Torch : MonoBehaviour
         initialEmissionRate = emissionModule.rateOverTime.constant;
 
         burnOutTimer = burnOutTime;
+    }
+
+    public void SetBurnOutTime(float newBurnOutTime)
+    {
+        burnOutTime = newBurnOutTime;
+        burnOutTimer = newBurnOutTime;
     }
 
     void Update()
