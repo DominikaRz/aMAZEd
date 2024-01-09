@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Torch : MonoBehaviour
 {
-    public Light torchLight;
-    public ParticleSystem fireParticleSystem;
-    public float burnOutTime = 60.0f; // Total time in seconds for the torch to burn out
+    public Light torchLight; // Assign this in the inspector
+    public ParticleSystem fireParticleSystem; // Assign this in the inspector
+    private float burnOutTime = 0f; // Total time in seconds for the torch to burn out
 
     private float initialLightIntensity;
     private float initialEmissionRate;
@@ -12,7 +12,20 @@ public class Torch : MonoBehaviour
 
     public AudioSource audioSource;
     private bool countdownAudioPlayed = false;
+    
+    public void RestoreLight(float timeToAdd) {
+        //Debug.Log($"Current burn time: {burnOutTimer}");
+        burnOutTimer += timeToAdd;
+        burnOutTime = burnOutTimer;
+        Debug.Log($"New burn time after adding {timeToAdd}: {burnOutTimer}");
+    }
 
+
+    public void SetBurnOutTime(float time) {
+        Debug.Log($"Current burn time: {burnOutTime}");
+        burnOutTimer = time;
+        this.burnOutTime = time;
+    }
     void Start()
     {
         if (torchLight == null)
@@ -26,13 +39,9 @@ public class Torch : MonoBehaviour
         var emissionModule = fireParticleSystem.emission;
         initialEmissionRate = emissionModule.rateOverTime.constant;
 
-        burnOutTimer = burnOutTime;
-    }
+        //SetBurnOutTime(40f);
 
-    public void SetBurnOutTime(float newBurnOutTime)
-    {
-        burnOutTime = newBurnOutTime;
-        burnOutTimer = newBurnOutTime;
+        burnOutTimer = burnOutTime;
     }
 
     void Update()
@@ -41,6 +50,7 @@ public class Torch : MonoBehaviour
         {
             // Calculate the new intensity and emission rate based on the elapsed time
             burnOutTimer -= Time.deltaTime;
+            burnOutTime = burnOutTimer;
             float ratio = burnOutTimer / burnOutTime;
 
             // Set the new intensity and emission rate
@@ -65,4 +75,5 @@ public class Torch : MonoBehaviour
 
         }
     }
+
 }

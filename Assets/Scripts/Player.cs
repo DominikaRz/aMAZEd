@@ -27,6 +27,11 @@ public class Player : MonoBehaviour
 
     private float distanceToElevator;
 
+    public int lightersCollected = 0;
+    private Torch torch;
+    private SaveLevel saveLevelInstance;
+    private Lighter lighter;
+
     private float moveThreshold = 0.1f;
     //private int keyCount = 0;
 
@@ -69,6 +74,13 @@ public class Player : MonoBehaviour
         if (cameraGameObject != null) {
             playerCamera = cameraGameObject.GetComponent<Camera>();
         }
+
+        torch = FindObjectOfType<Torch>();
+        lighter = FindObjectOfType<Lighter>();
+        
+        saveLevelInstance = new SaveLevel();
+        RestoreLighters();
+
 
     }
 
@@ -182,6 +194,11 @@ public class Player : MonoBehaviour
         {
             RotateTowardsTarget();
         }
+
+        if (Input.GetKeyDown(KeyCode.L) && lightersCollected > 0) {
+            UseLighter(torch);
+        }
+        
     }
 
    
@@ -405,6 +422,36 @@ public class Player : MonoBehaviour
         // Ensure final position and rotation are set
         transform.position = endPosition;
         transform.rotation = endRotation;
+    }
+
+    public void AddLighter(Lighter lighter) {
+        
+        Debug.Log($"Lighters: {lightersCollected}");
+        lightersCollected++;
+        saveLevelInstance.addLighterToInventory();
+        
+        hudManager = FindObjectOfType<HUDManager>();
+        hudManager.UpdateLighterDisplay();
+        // Update UI or other game elements if necessary
+    }
+
+    public void UseLighter(Torch torch) {
+        if (lightersCollected > 0) {
+            lighter.UseLighter(torch);
+            lightersCollected--;
+            saveLevelInstance.removeighterToInventory();
+            
+            hudManager = FindObjectOfType<HUDManager>();
+            hudManager.UpdateLighterDisplay();
+            // Update UI or other game elements if necessary
+        }
+    }
+
+    public void RestoreLighters(){        
+        lightersCollected = saveLevelInstance.loadLighterNumber();
+        
+        hudManager = FindObjectOfType<HUDManager>();
+        hudManager.UpdateLighterDisplay();
     }
     
 }

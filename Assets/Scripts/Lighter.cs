@@ -1,32 +1,34 @@
 using UnityEngine;
 
-public class Lighter : MonoBehaviour
-{
-    public float burnTime = 20f; // Amount of health to restore
+public class Lighter : MonoBehaviour {
+    public float restoreTime = 120f; // Time added to the torch's burn time
+    
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    public void UseLighter(Torch torch) {
+        torch.RestoreLight(restoreTime);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        /*
-        if (other.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
+            Player playerComponent = other.GetComponent<Player>();
+            if (playerComponent != null)
             {
-                float PalyerHealthValue = playerHealth.getHealthValue();
-                if((PalyerHealthValue + healthAmount) > 100){
-                    playerHealth.SetHealthTo100();
-                    //Debug.Log($"Yes, it is above 100!");
-                    //Debug.Log($"Player health = {PalyerHealthValue}");
-                }
-                else{
-                    playerHealth.RestoreHealth(healthAmount);
-                    //Debug.Log($"Player health = {PalyerHealthValue}");
-                }
-                
-                // You can also play a sound effect or particle effect here to indicate the collection.
-                Destroy(gameObject);
+                playerComponent.AddLighter(this);
+
+                audioSource.Play();
+
+                // Destroy the key GameObject after the sound finished playing
+                Destroy(gameObject);//, audioSource.clip.length);
             }
         }
-        */
     }
 }
+

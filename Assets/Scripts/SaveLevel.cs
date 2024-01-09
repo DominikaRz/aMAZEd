@@ -46,13 +46,26 @@ public class SaveLevel : MonoBehaviour
     }
     
   //lighter number management
-    public int LoadLighterNumber()
+    public int loadLighterNumber()
     {
         return PlayerPrefs.GetInt("lightersNumber");
     }
     public void SaveLighterNumber(int lighter)
     {
         PlayerPrefs.SetInt("lightersNumber", lighter);
+    }
+
+    public void addLighterToInventory()
+    {
+        int lighter = PlayerPrefs.GetInt("lightersNumber");
+        lighter++;
+        SaveLighterNumber(lighter);
+    }
+    public void removeighterToInventory()
+    {
+        int lighter = PlayerPrefs.GetInt("lightersNumber");
+        lighter--;
+        SaveLighterNumber(lighter);
     }
 
   //end level number management
