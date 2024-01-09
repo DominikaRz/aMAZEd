@@ -10,6 +10,9 @@ public class Torch : MonoBehaviour
     private float initialEmissionRate;
     private float burnOutTimer;
 
+    public AudioSource audioSource;
+    private bool countdownAudioPlayed = false;
+    
     public void RestoreLight(float timeToAdd) {
         //Debug.Log($"Current burn time: {burnOutTimer}");
         burnOutTimer += timeToAdd;
@@ -55,6 +58,13 @@ public class Torch : MonoBehaviour
             var emissionModule = fireParticleSystem.emission;
             emissionModule.rateOverTime = initialEmissionRate * ratio;
 
+
+            if (burnOutTimer <= 10.0f && !countdownAudioPlayed)
+            {
+                audioSource.Play(); // Play the audio clip
+                countdownAudioPlayed = true;
+            }
+
             // If the torch has burned out, ensure the light and particle system are turned off
             if (burnOutTimer <= 0)
             {
@@ -62,6 +72,7 @@ public class Torch : MonoBehaviour
                 emissionModule.rateOverTime = 0;
                 fireParticleSystem.Stop(); // Stop the particle system
             }
+
         }
     }
 
