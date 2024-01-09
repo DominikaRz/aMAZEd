@@ -57,8 +57,8 @@ public class SaveLevel : MonoBehaviour
 
   //end level number management
     public void SetEndLevelNumber(){
-        //int endLvl = 2;
-        int endLvl = Random.Range(100, 10000);
+        int endLvl = 10;
+        //int endLvl = Random.Range(100, 10000);
         PlayerPrefs.SetInt("endLevelNumber", endLvl);
     }
 
