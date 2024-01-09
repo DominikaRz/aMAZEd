@@ -38,11 +38,15 @@ public class GameManager : MonoBehaviour
     public int numberOfZombies = 5;
     public int numberOfFastZombies = 2;
 
-    public GameObject keyPrefab, healthPrefab;
+    public GameObject keyPrefab, healthPrefab, lighterPrefab;
     private GameObject key;
     private GameObject health;
+    private GameObject lighter;
     private GameObject storyItem;
     private GameObject entry, exit;
+    private float BurnOutTime;
+    private Timer timer;
+    private float cutsceneTime = 10f;
 
     public static int numberOfKeys = 3;
     public static int numberOfHealths = 2;
@@ -63,8 +67,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
-        
     }
+        
+    
 
     private void Update()
     {
@@ -87,6 +92,11 @@ public class GameManager : MonoBehaviour
     {
         nmBuilder = GetComponent<MazeNavMeshBuilder>();
         saveLevelInstance = new SaveLevel();
+
+        timer = FindObjectOfType<Timer>();
+        if (timer == null) {
+            Debug.LogError("Timer component not found on any GameObject.");
+        }
     }
 
 
@@ -106,9 +116,9 @@ public class GameManager : MonoBehaviour
         if (level == 1) // Assuming the first level is represented by 1
         {
             mazeInstance.size = new IntVector2(5, 5);
-            numberOfLighters = 3; 
+            numberOfLighters = 0; 
+            BurnOutTime = 240f;
             mazeInstance.roomExpansionChance = 0.5f; 
-            torchInstance.SetBurnOutTime(60.0f);
             numberOfKeys = 2; 
             numberOfZombies = 0; 
             numberOfFastZombies = 0; 
@@ -119,31 +129,46 @@ public class GameManager : MonoBehaviour
         {
             mazeInstance.size = new IntVector2(6, 6);
             mazeInstance.roomExpansionChance = 0.4f;
-            numberOfLighters = 5; 
             minSpawnDistanceFromPlayer = 3f; 
-            torchInstance.SetBurnOutTime(240.0f);
+            numberOfLighters = 4; 
+            BurnOutTime = 60f;
             numberOfKeys = 2;
             numberOfZombies = 1;
             numberOfFastZombies = 0;
             numberOfHealths = 2; 
             numberOfStories = 0; 
         }
-        else if (level == 3)
+        else if (level == 3) 
+        {
+            mazeInstance.size = new IntVector2(6, 6);
+            mazeInstance.roomExpansionChance = 0.4f;
+            minSpawnDistanceFromPlayer = 3f; 
+            numberOfLighters = 7; 
+            BurnOutTime = 60f;
+            numberOfKeys = 2;
+            numberOfZombies = 1;
+            numberOfFastZombies = 0;
+            numberOfHealths = 2; 
+            numberOfStories = 0; 
+        }
+        else if (level == 4)
         {
             mazeInstance.size = new IntVector2(7, 7);
             mazeInstance.roomExpansionChance = 0.4f;
-            numberOfLighters = 7; 
+            numberOfLighters = 5; 
+            BurnOutTime = 60f;
             numberOfKeys = 3;
             numberOfZombies = 3;
             numberOfFastZombies = 0;
             numberOfHealths = 3;
             numberOfStories = 0;
         }
-        else if (level == 4) 
+        else if (level == 5) 
         {
-            mazeInstance.size = new IntVector2(6, 6);
+            mazeInstance.size = new IntVector2(9, 9);
             mazeInstance.roomExpansionChance = 0.4f;
             numberOfLighters = 8; 
+            BurnOutTime = 60f;
             numberOfKeys = 4; 
             numberOfZombies = 3; 
             numberOfFastZombies = 1; 
@@ -155,19 +180,22 @@ public class GameManager : MonoBehaviour
         {
             // For higher levels, increase maze size and number of zombies slightly
             int sizeIncrease = level % 10;
-            numberOfLighters = 5 + (int)(sizeIncrease / 2);
+            //numberOfLighters = 5 + (int)(sizeIncrease / 2);
             mazeInstance.size = new IntVector2(10 + (int)(sizeIncrease), 10 + (int)(sizeIncrease));
-            numberOfKeys = (int)(sizeIncrease*1.5f); 
+            numberOfKeys = (int)(sizeIncrease * 1.5f); 
             numberOfZombies = 1 + (int)(sizeIncrease * 0.5f);
             numberOfFastZombies = 1 + (int)(sizeIncrease * 0.19f);
-            numberOfHealths = (int)(sizeIncrease);
-            numberOfStories = (int)(sizeIncrease) - 2;
+            numberOfHealths = (numberOfZombies * 2) + (numberOfFastZombies * 3) + (int)(sizeIncrease);
+            numberOfStories = Random.Range(0, 7);
+            numberOfLighters = 5 * (int)(sizeIncrease * 0.6f); 
+            BurnOutTime = 60f * (int)(sizeIncrease / 2);
             mazeInstance.roomExpansionChance = 0.4f + 0.0005f * (sizeIncrease % 10); // Increase room expansion probability
         }
 
     }
     private IEnumerator BeginGame()
     {
+        timer.StartTimer();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
         Camera.main.rect = new Rect(0f, 0f, 1f, 1f);
 
@@ -206,6 +234,7 @@ public class GameManager : MonoBehaviour
             SpawnKeys(numberOfKeys);
             SpawnHealth(numberOfHealths);
             SpawnStoryItems(numberOfStories);
+            SpawnLighter(numberOfLighters);
 
 
             SetupCamera();
@@ -243,6 +272,17 @@ public class GameManager : MonoBehaviour
         SpawnZombies(numberOfZombies);
         SpawnFastZombies(numberOfFastZombies);
 
+        timer.StopTimer();
+        cutsceneTime = timer.GetElapsedTime();
+        Debug.Log($"cutsceneTime: {cutsceneTime}");
+        
+        SetupTorch();
+        AddTimeTorch(cutsceneTime);
+        
+
+        
+        //torchInstance = player.GetComponentInChildren<Torch>();
+
 
         Camera.main.clearFlags = CameraClearFlags.Depth;
         Camera.main.rect = new Rect(0f, 0f, 0.3f, 0.5f);
@@ -274,6 +314,34 @@ public class GameManager : MonoBehaviour
             Debug.LogError("No camera with the tag 'PlayerCamera' was found in the scene.");
         }
     }
+
+    private void SetupTorch() {
+        if (playerInstance != null) {
+            Torch torch = playerInstance.GetComponentInChildren<Torch>();
+            if (torch != null) {
+                // Set up the torch (e.g., set default burn out time)
+                torch.SetBurnOutTime(BurnOutTime);
+            } else {
+                Debug.LogError("Torch component not found on the player.");
+            }
+        } else {
+            Debug.LogError("Player instance is null.");
+        }
+    }
+    private void AddTimeTorch(float time) {
+        if (playerInstance != null) {
+            Torch torch = playerInstance.GetComponentInChildren<Torch>();
+            if (torch != null) {
+                torch.RestoreLight(time);
+            } else {
+                Debug.LogError("Torch component not found on the player.");
+            }
+        } else {
+            Debug.LogError("Player instance is null.");
+        }
+    }
+
+
 
     private void SetupCamera()
     {
@@ -406,6 +474,21 @@ public class GameManager : MonoBehaviour
 
             health = Instantiate(healthPrefab, healthPosition, Quaternion.identity);
             health.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+        }
+    }
+    
+    /**/
+    private void SpawnLighter(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            MazeCell randomCell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+            Vector3 lighterPosition = randomCell.transform.position;
+            float floatHeight = 0.2f; // The height above the ground at which the key will float
+            lighterPosition.y += floatHeight;
+
+            lighter = Instantiate(lighterPrefab, lighterPosition, Quaternion.identity);
+            lighter.transform.localScale = new Vector3(2f, 2f, 2f);
         }
     }
 
