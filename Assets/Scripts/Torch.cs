@@ -12,18 +12,19 @@ public class Torch : MonoBehaviour
 
     public AudioSource audioSource;
     private bool countdownAudioPlayed = false;
-    
+
     public void RestoreLight(float timeToAdd) {
-        //Debug.Log($"Current burn time: {burnOutTimer}");
-        burnOutTimer += timeToAdd;
-        burnOutTime = burnOutTimer;
+        burnOutTime += timeToAdd;
+        burnOutTimer = burnOutTime;            
+        Debug.Log($"Current burn time: {burnOutTimer}");
         Debug.Log($"New burn time after adding {timeToAdd}: {burnOutTimer}");
     }
 
 
     public void SetBurnOutTime(float time) {
         Debug.Log($"Current burn time: {burnOutTime}");
-        burnOutTimer = time;
+        this.burnOutTimer = time;
+        //burnOutTimer = time;
         this.burnOutTime = time;
     }
     void Start()
@@ -39,9 +40,8 @@ public class Torch : MonoBehaviour
         var emissionModule = fireParticleSystem.emission;
         initialEmissionRate = emissionModule.rateOverTime.constant;
 
-        //SetBurnOutTime(40f);
-
         burnOutTimer = burnOutTime;
+        
     }
 
     void Update()
@@ -50,8 +50,17 @@ public class Torch : MonoBehaviour
         {
             // Calculate the new intensity and emission rate based on the elapsed time
             burnOutTimer -= Time.deltaTime;
-            burnOutTime = burnOutTimer;
             float ratio = burnOutTimer / burnOutTime;
+
+            if (!torchLight.enabled)
+            {
+                torchLight.enabled = true;
+            }
+
+            if (!fireParticleSystem.isPlaying)
+            {
+                fireParticleSystem.Play();
+            }
 
             // Set the new intensity and emission rate
             torchLight.intensity = initialLightIntensity * ratio;
@@ -68,11 +77,27 @@ public class Torch : MonoBehaviour
             // If the torch has burned out, ensure the light and particle system are turned off
             if (burnOutTimer <= 0)
             {
-                torchLight.enabled = false;
-                emissionModule.rateOverTime = 0;
-                fireParticleSystem.Stop(); // Stop the particle system
+                if (torchLight.enabled || fireParticleSystem.isPlaying)
+                {
+                    torchLight.enabled = false;
+                    emissionModule.rateOverTime = 0;
+                    fireParticleSystem.Stop(); // Stop the particle system
+                }
             }
 
+        }
+        if (burnOutTimer < 0)
+        {
+            
+            GameObject playerGameObject = GameObject.FindGameObjectWithTag("Player"); 
+            PlayerHealth playerHealth = playerGameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                    playerHealth.TakeDamage(0.05f);
+            }
+            else{
+                Debug.Log($"playerHealth not found!");
+            }
         }
     }
 
