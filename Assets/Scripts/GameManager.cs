@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
             mazeInstance.roomExpansionChance = 0.4f;
             minSpawnDistanceFromPlayer = 3f; 
             numberOfLighters = 4; 
-            BurnOutTime = 60f;
+            BurnOutTime = 30f;
             numberOfKeys = 2;
             numberOfZombies = 1;
             numberOfFastZombies = 0;

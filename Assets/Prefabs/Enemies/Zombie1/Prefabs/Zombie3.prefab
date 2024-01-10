@@ -898,7 +898,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 0.4
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -929,7 +929,6 @@ MonoBehaviour:
   fastAttackRange: 0.6
   fastMovementSpeed: 1
   attackDamage: 0.3
-  attackAudioSource: {fileID: 1222970006095158805}
 --- !u!54 &-6861426894889213538
 Rigidbody:
   m_ObjectHideFlags: 0
