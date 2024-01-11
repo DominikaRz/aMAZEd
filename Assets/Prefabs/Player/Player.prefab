@@ -179,6 +179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keysCollected: 0
   playerCamera: {fileID: 0}
+  lightersCollected: 0
   fallDuration: 0.1
   nearGroundYPosition: 0.74
 --- !u!136 &5033447368387719216
@@ -559,6 +560,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 154340844945153210}
     - target: {fileID: 1024938326972377092, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
+      propertyPath: audioTourch
+      value: 
+      objectReference: {fileID: 6428606638768430383}
+    - target: {fileID: 1024938326972377092, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
       propertyPath: burnOutTime
       value: 60
       objectReference: {fileID: 0}
@@ -567,20 +572,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 383795ca9bd28ad408575071bdc3dcba, type: 3}
     - target: {fileID: 2073667113275319272, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
-      propertyPath: m_Range
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2073667113734102180, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2073667113275319272, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
       propertyPath: m_Type
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2073667113275319272, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
       propertyPath: m_Range
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2073667113734102180, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -696,3 +697,8 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!82 &6428606638768430383 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 2073667113734102180, guid: 1fc5f3b45ebb8e2489344e0aa2bb3d34, type: 3}
+  m_PrefabInstance: {fileID: 5040050170788921739}
+  m_PrefabAsset: {fileID: 0}
