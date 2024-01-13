@@ -147,7 +147,17 @@ public class Maze : MonoBehaviour {
 		newCell.name = "Maze Cell " + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = transform;
 		newCell.transform.localPosition = new Vector3(coordinates.x - size.x * 0.5f + 0.5f, 0f, coordinates.z - size.z * 0.5f + 0.5f);
+		//SetLayerRecursively(newCell.gameObject, LayerMask.NameToLayer("LightMaze"));
 		return newCell;
+	}
+	void SetLayerRecursively(GameObject obj, int newLayer) {
+		if (obj == null) return;
+		
+		obj.layer = newLayer;
+		
+		foreach (Transform child in obj.transform) {
+			SetLayerRecursively(child.gameObject, newLayer);
+		}
 	}
 	
 	private List<MazeDoor> doorsInRoom = new List<MazeDoor>(); // Track doors in the current room

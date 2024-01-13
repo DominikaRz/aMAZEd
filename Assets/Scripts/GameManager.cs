@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(BeginGame());
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
+        Camera.main.clearFlags = CameraClearFlags.Skybox;
     }
         
     
@@ -226,7 +227,6 @@ public class GameManager : MonoBehaviour
             PlaceEntryAndExitRooms();
             // Instantiate the player and set location.
             SetupPlayer();
-            
             //handle baking of navMesh
             nmBuilder.BuildNavMesh();
 
@@ -235,6 +235,8 @@ public class GameManager : MonoBehaviour
             SpawnHealth(numberOfHealths);
             SpawnStoryItems(numberOfStories);
             SpawnLighter(numberOfLighters);
+            //handle baking of navMesh
+            nmBuilder.BuildNavMesh();
 
 
             SetupCamera();
@@ -271,6 +273,7 @@ public class GameManager : MonoBehaviour
         // Instantiate the zombies
         SpawnZombies(numberOfZombies);
         SpawnFastZombies(numberOfFastZombies);
+            
 
         timer.StopTimer();
         cutsceneTime = timer.GetElapsedTime();
