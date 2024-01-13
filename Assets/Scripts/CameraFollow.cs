@@ -6,6 +6,7 @@ public class CameraFollow : MonoBehaviour
     public Vector3 offset; // The offset distance between the camera and the player
     public float smoothSpeed = 0.125f; // The smoothing factor
     public float height = 10f;
+    public float rotation = 45f;
 
     void FixedUpdate()
     {
@@ -26,7 +27,7 @@ public class CameraFollow : MonoBehaviour
 
         // Set the camera's position to the smoothed position
         //transform.position = smoothedPosition;
-        transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+        transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
         desiredPosition.y = height;
 
         // Optionally, you can make the camera look at the target always

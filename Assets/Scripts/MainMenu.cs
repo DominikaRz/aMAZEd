@@ -7,6 +7,8 @@ public class MainMenu : MonoBehaviour
 {
     public GameObject MainMenuUI;
     public AudioSource backgroundAudioSource; // Assign this in the inspector
+    public GameObject continueButton;
+    public GameObject fadeImage;
 
     private SaveLevel saveLevelInstance;
 
@@ -14,6 +16,14 @@ public class MainMenu : MonoBehaviour
     {
         saveLevelInstance = gameObject.AddComponent<SaveLevel>();
         PlayBackgroundMusic();
+        UpdateButtonStates();
+        
+        Invoke("FadeIn", 1f);
+        
+    }
+
+    private void FadeIn(){
+        fadeImage.SetActive(false);
     }
 
     private void PlayBackgroundMusic()
@@ -27,6 +37,8 @@ public class MainMenu : MonoBehaviour
     public void LoadNewGame()
     {
         saveLevelInstance.Delete();
+        saveLevelInstance.SaveLvl(1);
+        saveLevelInstance.SetEndLevelNumber();
         SceneManager.LoadScene("DockThing");
         // Optional: Stop music if it shouldn't play in the next scene
     }
@@ -43,5 +55,19 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
         EventSystem.current.SetSelectedGameObject(null);
         // Optional: Stop music here if needed for any reason
+    }
+
+    private void UpdateButtonStates()
+    {
+        int lvl = saveLevelInstance.LoadLvl();
+        Debug.Log($"{lvl}");
+        if (lvl != 0)
+        {
+            continueButton.SetActive(true); // Show the continue button
+        }
+        else
+        {
+            continueButton.SetActive(false); // Hide the continue button
+        }
     }
 }
