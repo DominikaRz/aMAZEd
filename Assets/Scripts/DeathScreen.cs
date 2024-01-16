@@ -11,6 +11,20 @@ public class DeathScreen : MonoBehaviour
 
     public static DeathScreen Instance { get; private set; }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+         if (Input.GetMouseButtonDown(1)) //left click = 0; right clisk = 1
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     void Awake()
     {
         if (Instance == null)
