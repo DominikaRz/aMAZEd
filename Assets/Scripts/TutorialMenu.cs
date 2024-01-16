@@ -6,18 +6,39 @@ using UnityEngine;
 
 public class TutorialMenu : MonoBehaviour
 {
-    public string name;
+    public string name = "MazeScene";
     private Animator animator; // Reference to the Animator component
     private float delayTimer = 1.5f;
+    private bool trigger = false;
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
+    }
+
+    void FixedUpdate(){
+        if(trigger == true){  
+            delayTimer -= Time.deltaTime;
+            if (delayTimer <= 0f)
+            {
+                SceneManager.LoadScene(name);
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         ChangeSceneWithDelay();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+         if (Input.GetMouseButtonDown(1)) //left click = 0; right clisk = 1
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     public void ChangeSceneWithDelay()
@@ -31,11 +52,9 @@ public class TutorialMenu : MonoBehaviour
 
     private void LoadScene()
     {
-        delayTimer -= Time.deltaTime;
+        //delayTimer -= Time.deltaTime;
+        trigger = true;
         animator.SetTrigger("Fade");
-        if (delayTimer <= 0f)
-        {
-            SceneManager.LoadScene(name);
-        }
+        
     }
 }

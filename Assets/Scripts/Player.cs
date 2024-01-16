@@ -213,7 +213,7 @@ public class Player : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
-         if (Input.GetMouseButtonDown(0)) //left click = 0; right clisk = 1
+         if (Input.GetMouseButtonDown(1)) //left click = 0; right clisk = 1
         {
             //Lock the cursor
             Cursor.lockState = CursorLockMode.Locked;
