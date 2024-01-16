@@ -28,9 +28,11 @@ public class Player : MonoBehaviour
     private float distanceToElevator;
 
     public int lightersCollected = 0;
+    public int matchesCollected = 0;
     private Torch torch;
     private SaveLevel saveLevelInstance;
     private Lighter lighter;
+    private Match match;
 
     private float moveThreshold = 0.1f;
     //private int keyCount = 0;
@@ -40,6 +42,11 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        //Lock the cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        // Hide the cursor from view
+        Cursor.visible = false;
+
         // Find the Scavenger Variant child object
         Transform scavengerVariantTransform = transform.Find("Scavenger Variant");
         if (scavengerVariantTransform != null)
@@ -68,6 +75,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogWarning("ElevatorDoorsController script not found in the scene.");
         }
+
         storyDisplay = FindObjectOfType<StoryDisplay>();
 
         GameObject cameraGameObject = GameObject.FindWithTag("PlayerCamera");
@@ -77,16 +85,57 @@ public class Player : MonoBehaviour
 
         torch = FindObjectOfType<Torch>();
         lighter = FindObjectOfType<Lighter>();
+        match = FindObjectOfType<Match>();
         
         saveLevelInstance = new SaveLevel();
         RestoreLighters();
+        RestoreMatches();
+
+        
+        rbody = GetComponent<Rigidbody>();
+        //Rigidbody rb = GetComponent<Rigidbody>();
+        rbody.constraints = RigidbodyConstraints.FreezePositionY | rbody.constraints; // This line keeps the existing constraints and adds a constraint on the Y position.
 
 
     }
 
+    Quaternion deltaRotation;
+    Vector3 deltaPosition;
+    Rigidbody rbody;
+    float horizontal;  //left to righ controlls (A & D keys)
+    float vertical;    //up and down controllers (W & S keys)
+    float mouseX;
+    float mouseY;
+
+    [Range(10f, 100f)]
+    public float mouseSensitivity = 70f;
+    private float pitch = 0f; // Add this variable at the class level
+    public float verticalMouseSensitivity = 2.0f;
+    public float maxSpeed = 3f;
+    public float speed = 1.5f;
+
+
     private void FixedUpdate()
     {
+        rbody.constraints = RigidbodyConstraints.FreezePositionY | rbody.constraints;
+        rbody.constraints = RigidbodyConstraints.FreezeRotationY | rbody.constraints;
+        deltaRotation = Quaternion.Euler(Vector3.up * mouseX * mouseSensitivity * Time.fixedDeltaTime);
+        rbody.MoveRotation(rbody.rotation * deltaRotation); 
 
+        deltaPosition = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime;
+        rbody.MovePosition(rbody.position + deltaPosition);
+
+        // Check for running input (e.g., holding down Left Shift key)
+        if (Input.GetKey(KeyCode.LeftShift)) {
+            moveSpeed = maxSpeed;
+        }
+        else {
+            moveSpeed = speed; // Or your default move speed
+        }
+
+        // Calculate position change and apply it
+        deltaPosition = ((transform.forward * vertical) + (transform.right * horizontal)) * moveSpeed * Time.fixedDeltaTime;
+        rbody.MovePosition(rbody.position + deltaPosition);
     }
 
     private void Move(MazeDirection direction)
@@ -106,7 +155,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Animate()
+
+
+/*    private void Animate()
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
@@ -139,14 +190,16 @@ public class Player : MonoBehaviour
             scavengerAnimator.SetTrigger("StopWalking");
         }
     }
+*/
 
     private void Look(MazeDirection direction)
     {
+        float mouseX = Input.GetAxis("Mouse X"); // Horizontal mouse movement
+        float mouseY = Input.GetAxis("Mouse Y"); // Vertical mouse movement
         if (isRotating)
         {
             return;
         }
-
         currentDirection = direction;
         targetRotation = direction.ToRotation();
         isRotating = true;
@@ -154,7 +207,19 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Animate();
+        //Animate();
+         if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+         if (Input.GetMouseButtonDown(0)) //left click = 0; right clisk = 1
+        {
+            //Lock the cursor
+            Cursor.lockState = CursorLockMode.Locked;
+            // Hide the cursor from view
+            Cursor.visible = false;
+        }
 
         if(IsNearElevator() && !HasCollectedRequiredKeys()){
             storyDisplay.message = "Collect ALL keyes!";
@@ -178,11 +243,13 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
+        
         if (!isMoving)
         {
             CheckInput();
-        }
+        }/**/
+        //GetInputs();
+        
         if (useMouseRotation)
         {
             CheckMouseRotation();
@@ -195,8 +262,14 @@ public class Player : MonoBehaviour
             RotateTowardsTarget();
         }
 
+        //Use lighter
+        /*
         if (Input.GetKeyDown(KeyCode.L) && lightersCollected > 0) {
             UseLighter(torch);
+        }*/
+        //Use match
+        if (Input.GetKeyDown(KeyCode.L) && matchesCollected > 0) {
+            UseMatch(torch);
         }
         
     }
@@ -293,13 +366,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AddKey(Key key)
-    {
-        hudManager = FindObjectOfType<HUDManager>();
-        keysCollected++;
-        hudManager.UpdateKeyDisplay();
-
-    }
 
     private void MoveTowardsTargetSmooth()
     {
@@ -350,9 +416,8 @@ public class Player : MonoBehaviour
             Look(currentDirection.GetNextClockwise());
         }
     }
+    /**/
 
-    //for doors
-    //private MazeCell currentCell;
 
     public void SetLocation(MazeCell cell)
     {
@@ -364,6 +429,8 @@ public class Player : MonoBehaviour
         transform.localPosition = cell.transform.localPosition;
         currentCell.OnPlayerEntered();
     }
+
+
 
     public bool IsNearElevator()
     {
@@ -391,9 +458,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    public float fallDuration = 2.0f; // Time in seconds over which the fall occurs
-    public float nearGroundYPosition = 0.74f; // The Y position near the ground
 
+    public void AddKey(Key key)
+    {
+        hudManager = FindObjectOfType<HUDManager>();
+        keysCollected++;
+        hudManager.UpdateKeyDisplay();
+
+    }
+
+    public float fallDuration = 2.0f; // Time in seconds over which the fall occurs
+    public float nearGroundYPosition = 0.2f; // The Y position near the ground
 
     public void Death(){
         scavengerAnimator.SetTrigger("Death");
@@ -407,7 +482,7 @@ public class Player : MonoBehaviour
         // Keep the same X and Z positions but change Y to near-ground level
         Vector3 endPosition = new Vector3(startPosition.x, nearGroundYPosition, startPosition.z);
         // Rotate to look straight up
-        Quaternion endRotation = Quaternion.Euler(97, -168f, 7f);
+        Quaternion endRotation = Quaternion.Euler(90f, 0f, 0f);
 
         while (elapsedTime < fallDuration) {
             float ratio = elapsedTime / fallDuration;
@@ -452,6 +527,35 @@ public class Player : MonoBehaviour
         
         hudManager = FindObjectOfType<HUDManager>();
         hudManager.UpdateLighterDisplay();
+    }
+    public void AddMatch(Match match) {
+        
+        Debug.Log($"Matches: {matchesCollected}");
+        matchesCollected++;
+        saveLevelInstance.addMatchToInventory();
+        
+        hudManager = FindObjectOfType<HUDManager>();
+        hudManager.UpdateMatchesDisplay();
+        // Update UI or other game elements if necessary
+    }
+
+    public void UseMatch(Torch torch) {
+        if (matchesCollected > 0) {
+            match.UseMatch(torch);
+            matchesCollected--;
+            saveLevelInstance.removeighterToInventory();
+            
+            hudManager = FindObjectOfType<HUDManager>();
+            hudManager.UpdateMatchesDisplay();
+            // Update UI or other game elements if necessary
+        }
+    }
+
+    public void RestoreMatches(){        
+        matchesCollected = saveLevelInstance.loadMatchNumber();
+        
+        hudManager = FindObjectOfType<HUDManager>();
+        hudManager.UpdateMatchesDisplay();
     }
     
 }

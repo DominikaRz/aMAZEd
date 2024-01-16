@@ -371,7 +371,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: There is limited time for the torch light. "You must hurry to finish the
-    level. Use a lighter to restore the fire
+    level. Use match to restore the fire
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8c5dd116cc817c843ae385c904609016, type: 2}
   m_sharedMaterial: {fileID: 3596342740581882631, guid: 8c5dd116cc817c843ae385c904609016, type: 2}
@@ -398,7 +398,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.4
+  m_fontSize: 25.65
   m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 1
