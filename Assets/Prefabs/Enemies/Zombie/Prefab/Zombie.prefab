@@ -1555,7 +1555,7 @@ MonoBehaviour:
   wanderRadius: 5
   attackDamage: 0.2
   wanderTimer: 5
-  stoppingDistance: 0.8
+  stoppingDistance: 0.4
   attackAudioSource: {fileID: 8498503927859720352}
   seeAudioSource: {fileID: -7503215582339433405}
 --- !u!114 &4485439047857801813

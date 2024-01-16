@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f6a50b8af342a3343b30013a8e720b1d
+guid: 8c34ceef578f70240ad1fc50114f0d0c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,13 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Button
-    second: {fileID: 2100000, guid: 30cf57df1071c9347aff000314ea227d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Panel
-    second: {fileID: 2100000, guid: d5d26a31876c8b244b1337ec8a560446, type: 2}
+      name: material
+    second: {fileID: 2100000, guid: 865524c21bf08bc4285525ce0501c8cf, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -24,7 +19,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 1
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -45,7 +40,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.4
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -100,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.004
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
@@ -111,7 +106,7 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
-  importBlendShapeDeformPercent: 0
+  importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 

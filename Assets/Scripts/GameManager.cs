@@ -38,10 +38,11 @@ public class GameManager : MonoBehaviour
     public int numberOfZombies = 5;
     public int numberOfFastZombies = 2;
 
-    public GameObject keyPrefab, healthPrefab, lighterPrefab;
+    public GameObject keyPrefab, healthPrefab, lighterPrefab, matchPrefab;
     private GameObject key;
     private GameObject health;
     private GameObject lighter;
+    private GameObject match;
     private GameObject storyItem;
     private GameObject entry, exit;
     private float BurnOutTime;
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
     public static int numberOfKeys = 3;
     public static int numberOfHealths = 2;
     public static int numberOfLighters = 3;
+    public static int numberOfMatches = 3;
 
     private SaveLevel saveLevelInstance;
 
@@ -111,14 +113,13 @@ public class GameManager : MonoBehaviour
             saveLevelInstance.SaveLvl(level);
             saveLevelInstance.SetEndLevelNumber();
         }
-
-        //torch.GetComponent<burnOutTime>();
        //tutorial levels 
         if (level == 1) // Assuming the first level is represented by 1
         {
             mazeInstance.size = new IntVector2(5, 5);
             numberOfLighters = 0; 
-            BurnOutTime = 240f;
+            numberOfMatches = 5; 
+            BurnOutTime = 600f;
             mazeInstance.roomExpansionChance = 0.5f; 
             numberOfKeys = 2; 
             numberOfZombies = 0; 
@@ -132,8 +133,8 @@ public class GameManager : MonoBehaviour
             mazeInstance.roomExpansionChance = 0.4f;
             minSpawnDistanceFromPlayer = 3f; 
             numberOfLighters = 4; 
-            BurnOutTime = 30f;
-            numberOfKeys = 2;
+            BurnOutTime = 60f;
+            numberOfKeys = 3;
             numberOfZombies = 1;
             numberOfFastZombies = 0;
             numberOfHealths = 2; 
@@ -141,30 +142,18 @@ public class GameManager : MonoBehaviour
         }
         else if (level == 3) 
         {
-            mazeInstance.size = new IntVector2(6, 6);
-            mazeInstance.roomExpansionChance = 0.4f;
+            mazeInstance.size = new IntVector2(8, 8);
+            mazeInstance.roomExpansionChance = 0.3f;
             minSpawnDistanceFromPlayer = 3f; 
             numberOfLighters = 7; 
-            BurnOutTime = 60f;
+            BurnOutTime = 30f;
             numberOfKeys = 2;
             numberOfZombies = 1;
-            numberOfFastZombies = 0;
-            numberOfHealths = 2; 
+            numberOfFastZombies = 1;
+            numberOfHealths = 5; 
             numberOfStories = 0; 
         }
         else if (level == 4)
-        {
-            mazeInstance.size = new IntVector2(7, 7);
-            mazeInstance.roomExpansionChance = 0.4f;
-            numberOfLighters = 5; 
-            BurnOutTime = 60f;
-            numberOfKeys = 3;
-            numberOfZombies = 3;
-            numberOfFastZombies = 0;
-            numberOfHealths = 3;
-            numberOfStories = 0;
-        }
-        else if (level == 5) 
         {
             mazeInstance.size = new IntVector2(9, 9);
             mazeInstance.roomExpansionChance = 0.4f;
@@ -188,15 +177,17 @@ public class GameManager : MonoBehaviour
             numberOfFastZombies = 1 + (int)(sizeIncrease * 0.19f);
             numberOfHealths = (numberOfZombies * 2) + (numberOfFastZombies * 3) + (int)(sizeIncrease);
             numberOfStories = Random.Range(0, 7);
-            numberOfLighters = 5 * (int)(sizeIncrease * 0.6f); 
-            BurnOutTime = 60f * (int)(sizeIncrease / 2);
-            mazeInstance.roomExpansionChance = 0.4f + 0.0005f * (sizeIncrease % 10); // Increase room expansion probability
+            numberOfLighters = 5 + (int)(sizeIncrease * 0.6f); 
+            BurnOutTime = 60f + (int)(sizeIncrease / 2);
+            mazeInstance.roomExpansionChance = 0.4f + 0.0005f * sizeIncrease; // Increase room expansion probability
         }
+        numberOfMatches = numberOfLighters;
 
     }
     private IEnumerator BeginGame()
     {
         timer.StartTimer();
+        Camera.main.GetComponent<AudioListener> ().enabled  =  true;
         Camera.main.clearFlags = CameraClearFlags.Skybox;
         Camera.main.rect = new Rect(0f, 0f, 1f, 1f);
 
@@ -227,6 +218,7 @@ public class GameManager : MonoBehaviour
             PlaceEntryAndExitRooms();
             // Instantiate the player and set location.
             SetupPlayer();
+            Camera.main.GetComponent<AudioListener> ().enabled  =  false;
             //handle baking of navMesh
             nmBuilder.BuildNavMesh();
 
@@ -234,7 +226,8 @@ public class GameManager : MonoBehaviour
             SpawnKeys(numberOfKeys);
             SpawnHealth(numberOfHealths);
             SpawnStoryItems(numberOfStories);
-            SpawnLighter(numberOfLighters);
+            //SpawnLighter(numberOfLighters);
+            SpawnMatches(numberOfMatches);
             //handle baking of navMesh
             nmBuilder.BuildNavMesh();
 
@@ -297,7 +290,9 @@ public class GameManager : MonoBehaviour
         }
 
         //storyDisplay.message = "Level: 1, 2, 3, 4, 5, 6, 7, 8, 9 , 0";//+level;
-        levelDisplay.message = level.ToString();
+        //levelDisplay.message = level.ToString();
+        levelDisplay.SetMessage(level.ToString());
+        levelDisplay.SetTime(BurnOutTime.ToString());
         levelDisplay.DisplayMessage();
        
     }
@@ -490,8 +485,23 @@ public class GameManager : MonoBehaviour
             float floatHeight = 0.2f; // The height above the ground at which the key will float
             lighterPosition.y += floatHeight;
 
+            
             lighter = Instantiate(lighterPrefab, lighterPosition, Quaternion.identity);
             lighter.transform.localScale = new Vector3(2f, 2f, 2f);
+        }
+    }
+    private void SpawnMatches(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            MazeCell randomCell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
+            Vector3 matchPosition = randomCell.transform.position;
+            float floatHeight = 0.001f; // The height above the ground at which the key will float
+            matchPosition.y += floatHeight;
+
+            Quaternion rotation = Quaternion.Euler(90, 0, 0);
+            match = Instantiate(matchPrefab, matchPosition, rotation);
+            match.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         }
     }
 
@@ -533,7 +543,6 @@ public class GameManager : MonoBehaviour
         if(level > endLvl) { SceneManager.LoadScene("DockThingEnd"); }
         //save the number of current level
         saveLevelInstance.SaveLvl(level + 1);
-
 
         RestartGame();
 

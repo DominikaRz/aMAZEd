@@ -7,6 +7,7 @@ public class HUDManager : MonoBehaviour
     public Slider healthSlider; // Reference to the UI slider for health.
     public TMP_Text keyCountText;
     public TMP_Text lighterCountText;
+    public TMP_Text matchesCountText;
     private Player player;    // Reference to the Player script
 
 
@@ -53,7 +54,20 @@ public class HUDManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Key count Text reference or Player reference not set in HUD Manager.");
+            Debug.LogError("Lighter count Text reference or Player reference not set in HUD Manager.");
+        }
+    }
+    public void UpdateMatchesDisplay()
+    {
+        player = FindObjectOfType<Player>();
+
+        if (matchesCountText != null)
+        {
+            matchesCountText.text = $" {player.matchesCollected} ";
+        }
+        else
+        {
+            Debug.LogError("Match count Text reference or Player reference not set in HUD Manager.");
         }
     }
 
@@ -70,6 +84,7 @@ public class HUDManager : MonoBehaviour
         }
 
         UpdateKeyDisplay();
-        UpdateLighterDisplay();
+        //UpdateLighterDisplay();
+        UpdateMatchesDisplay();
     }
 }

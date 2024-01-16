@@ -67,6 +67,27 @@ public class SaveLevel : MonoBehaviour
         lighter--;
         SaveLighterNumber(lighter);
     }
+    public int loadMatchNumber()
+    {
+        return PlayerPrefs.GetInt("matchesNumber");
+    }
+    public void SaveMathchNumber(int match)
+    {
+        PlayerPrefs.SetInt("matchesNumber", match);
+    }
+
+    public void addMatchToInventory()
+    {
+        int match = PlayerPrefs.GetInt("matchesNumber");
+        match++;
+        SaveMathchNumber(match);
+    }
+    public void removeMatchToInventory()
+    {
+        int match = PlayerPrefs.GetInt("matchesNumber");
+        match--;
+        SaveMathchNumber(match);
+    }
 
   //end level number management
     public void SetEndLevelNumber(){
