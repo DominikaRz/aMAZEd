@@ -230,7 +230,7 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Collected half of keyes!");
             OpenElevatorDoor();
-            if (distanceToElevator <= 1){
+            if (distanceToElevator < 1){
                 storyDisplay.message = "Press ENTER to continue";
                 storyDisplay.DisplayMessage();
                 if (Input.GetKeyDown(KeyCode.Return))
@@ -436,7 +436,7 @@ public class Player : MonoBehaviour
     {
         // Assuming the elevator is at cell (1,0)
         MazeCell elevatorCell = gameManager.mazeInstance.GetCell(
-            new IntVector2(gameManager.mazeInstance.size.x - 1, gameManager.mazeInstance.size.z - 1));
+            new IntVector2(gameManager.mazeInstance.size.x - 2, gameManager.mazeInstance.size.z - 1));
         distanceToElevator = Vector3.Distance(transform.position, elevatorCell.transform.position);
 
         return distanceToElevator <= 2.0f; 
