@@ -17,6 +17,8 @@ public class MainMenu : MonoBehaviour
         saveLevelInstance = gameObject.AddComponent<SaveLevel>();
         PlayBackgroundMusic();
         UpdateButtonStates();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         
         Invoke("FadeIn", 1f);
         

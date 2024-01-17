@@ -370,7 +370,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: There is limited time for the torch light. "You must hurry to finish the
+  m_text: There is limited time for the torch light. You must hurry to finish the
     level. Use match to restore the fire
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8c5dd116cc817c843ae385c904609016, type: 2}

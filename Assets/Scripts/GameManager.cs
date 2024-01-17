@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour
     public PlayableDirector cutsceneDirector;
     public PlayableDirector cutsceneDirector2;
 
+    public GameObject inSceneToActivate;
+    public GameObject outSceneToActivate;
+
     public Transform playerSpawnPoint;
     public Player playerPrefab;
     private Player playerInstance;
@@ -117,8 +120,7 @@ public class GameManager : MonoBehaviour
         if (level == 1) // Assuming the first level is represented by 1
         {
             mazeInstance.size = new IntVector2(5, 5);
-            numberOfLighters = 0; 
-            numberOfMatches = 5; 
+            numberOfMatches = 0; 
             BurnOutTime = 600f;
             mazeInstance.roomExpansionChance = 0.5f; 
             numberOfKeys = 2; 
@@ -132,7 +134,7 @@ public class GameManager : MonoBehaviour
             mazeInstance.size = new IntVector2(6, 6);
             mazeInstance.roomExpansionChance = 0.4f;
             minSpawnDistanceFromPlayer = 3f; 
-            numberOfLighters = 4; 
+            numberOfMatches = 4; 
             BurnOutTime = 60f;
             numberOfKeys = 3;
             numberOfZombies = 1;
@@ -142,10 +144,10 @@ public class GameManager : MonoBehaviour
         }
         else if (level == 3) 
         {
-            mazeInstance.size = new IntVector2(8, 8);
+            mazeInstance.size = new IntVector2(7, 7);
             mazeInstance.roomExpansionChance = 0.3f;
             minSpawnDistanceFromPlayer = 3f; 
-            numberOfLighters = 7; 
+            numberOfMatches = 7; 
             BurnOutTime = 30f;
             numberOfKeys = 2;
             numberOfZombies = 1;
@@ -155,9 +157,9 @@ public class GameManager : MonoBehaviour
         }
         else if (level == 4)
         {
-            mazeInstance.size = new IntVector2(9, 9);
+            mazeInstance.size = new IntVector2(8, 8);
             mazeInstance.roomExpansionChance = 0.4f;
-            numberOfLighters = 8; 
+            numberOfMatches = 8; 
             BurnOutTime = 60f;
             numberOfKeys = 4; 
             numberOfZombies = 3; 
@@ -169,23 +171,26 @@ public class GameManager : MonoBehaviour
         else
         {
             // For higher levels, increase maze size and number of zombies slightly
-            int sizeIncrease = level % 10;
+            int sizeIncrease = level % 5;
             //numberOfLighters = 5 + (int)(sizeIncrease / 2);
-            mazeInstance.size = new IntVector2(10 + (int)(sizeIncrease), 10 + (int)(sizeIncrease));
+            int rand = Random.Range(1, 4);
+            mazeInstance.size = new IntVector2(7 + rand + (int)(sizeIncrease), 7 + rand + (int)(sizeIncrease));
             numberOfKeys = (int)(sizeIncrease * 1.5f); 
-            numberOfZombies = 1 + (int)(sizeIncrease * 0.5f);
-            numberOfFastZombies = 1 + (int)(sizeIncrease * 0.19f);
-            numberOfHealths = (numberOfZombies * 2) + (numberOfFastZombies * 3) + (int)(sizeIncrease);
+            numberOfZombies = (int)(sizeIncrease / rand);
+            numberOfFastZombies = (int)(sizeIncrease  / rand);
+            numberOfHealths = (numberOfZombies * 3) + (numberOfFastZombies * 6) + (int)(sizeIncrease);
             numberOfStories = Random.Range(0, 7);
-            numberOfLighters = 5 + (int)(sizeIncrease * 0.6f); 
-            BurnOutTime = 60f + (int)(sizeIncrease / 2);
+            numberOfMatches = 5 + rand + (int)(sizeIncrease); 
+            BurnOutTime = 60f + (int)(sizeIncrease / rand);
             mazeInstance.roomExpansionChance = 0.4f + 0.0005f * sizeIncrease; // Increase room expansion probability
         }
-        numberOfMatches = numberOfLighters;
 
     }
     private IEnumerator BeginGame()
     {
+        
+        inSceneToActivate.SetActive(true);
+        outSceneToActivate.SetActive(false);
         timer.StartTimer();
         Camera.main.GetComponent<AudioListener> ().enabled  =  true;
         Camera.main.clearFlags = CameraClearFlags.Skybox;
@@ -239,6 +244,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => cutsceneDirector.state != PlayState.Playing);
 
         cutsceneDirector.Stop();
+        inSceneToActivate.SetActive(false);
+        outSceneToActivate.SetActive(true);
         Debug.Log("First cutscene stopped.");
 
         // Wait for the second cutscene to finish
@@ -301,7 +308,7 @@ public class GameManager : MonoBehaviour
     {
         playerInstance = Instantiate(playerPrefab) as Player;
         playerInstance.SetLocation(mazeInstance.GetCell(new IntVector2(1, 0)));
-        playerInstance.transform.Rotate(0f, 180f, 0f);
+        playerInstance.transform.Rotate(0f, 0f, 0f);
 
         //for disable cutscene view in next steps
         GameObject cameraGameObject = GameObject.FindWithTag("PlayerCamera");
