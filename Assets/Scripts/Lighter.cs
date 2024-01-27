@@ -21,7 +21,7 @@ public class Lighter : MonoBehaviour {
             Player playerComponent = other.GetComponent<Player>();
             if (playerComponent != null)
             {
-                playerComponent.AddLighter(this);
+                //playerComponent.AddLighter(this);
 
                 audioSource.Play();
 

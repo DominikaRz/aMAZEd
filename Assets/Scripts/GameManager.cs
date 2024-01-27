@@ -175,11 +175,11 @@ public class GameManager : MonoBehaviour
             //numberOfLighters = 5 + (int)(sizeIncrease / 2);
             int rand = Random.Range(1, 4);
             mazeInstance.size = new IntVector2(7 + rand + (int)(sizeIncrease), 7 + rand + (int)(sizeIncrease));
-            numberOfKeys = (int)(sizeIncrease * 1.5f); 
+            numberOfKeys = 1 + (int)(sizeIncrease * 1.5f); 
             numberOfZombies = (int)(sizeIncrease / rand);
             numberOfFastZombies = (int)(sizeIncrease  / rand);
             numberOfHealths = (numberOfZombies * 3) + (numberOfFastZombies * 6) + (int)(sizeIncrease);
-            numberOfStories = Random.Range(0, 7);
+            numberOfStories = Random.Range(0, 6);
             numberOfMatches = 5 + rand + (int)(sizeIncrease); 
             BurnOutTime = 60f + (int)(sizeIncrease / rand);
             mazeInstance.roomExpansionChance = 0.4f + 0.0005f * sizeIncrease; // Increase room expansion probability
@@ -371,20 +371,28 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Player instance is null");
             return;
         }
-
+        
         SaveData saveData = new SaveData();
+
      //number of level
         saveData.levelNumber = level;
-     //player position    
-        saveData.playerPositionX = playerInstance.transform.position.x;
-        saveData.playerPositionY = playerInstance.transform.position.y;
-        saveData.playerPositionZ = playerInstance.transform.position.z;
+     //player position   
+        IntVector2 position = mazeInstance.GetCurrentCell(new Vector3(playerInstance.transform.position.x, playerInstance.transform.position.y, playerInstance.transform.position.z));
+        saveData.playerPositionX = position.x;
+        saveData.playerPositionZ = position.z; 
      //number of keyes
         saveData.numberOfCollectedKeyes = playerInstance.keysCollected;
+        
+        PlayerHealth playerHealth = playerInstance.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            saveData.playerHealth = playerHealth.CurrentHealth();
+        }
         
         saveLevelInstance.Save(saveData);
 
     }
+    /*
     public void LoadGame()
     {
         SaveData saveData = saveLevelInstance.Load();
@@ -394,7 +402,21 @@ public class GameManager : MonoBehaviour
             if (playerInstance != null)
             {
                 playerInstance.transform.position = new Vector3(saveData.getPositionX(), saveData.getPositionY(), saveData.getPositionZ());
-                playerInstance.keysCollected = saveData.getKeyes();     
+                playerInstance.transform.rotation = Quaternion.identity;
+                playerInstance.SetLocation(mazeInstance.GetCell(new IntVector2((int)(saveData.getPositionX()), (int)(saveData.getPositionY()))));
+                
+                //playerInstance.keysCollected = saveData.getKeyes(); 
+
+                PlayerHealth playerHealth = playerPrefab.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.RestoreHealth(saveData.playerHealth);
+                    if (DeathScreen.Instance != null)
+                    {
+                        DeathScreen.Instance.HideDeathScreen();
+                    }
+                }  
+                torchInstance.SetBurnOutTime(60);  
             }
             else
             {
@@ -402,7 +424,44 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    /**/
+    */
+
+    public void LoadGame()
+    {
+        SaveData saveData = saveLevelInstance.Load();
+        if (saveData != null)
+        {
+            level = saveData.levelNumber;
+            if (playerInstance != null)
+            {
+                //playerInstance.transform.position = new Vector3(saveData.getPositionX(), saveData.getPositionY(), saveData.getPositionZ());
+                //playerInstance.transform.rotation = Quaternion.identity; // If you have saved rotation, use it here
+                playerInstance.SetLocation(mazeInstance.GetCell(new IntVector2((int)(saveData.getPositionX()), (int)(saveData.getPositionZ()))));
+
+                // Update this line to get the PlayerHealth component from playerInstance
+                PlayerHealth playerHealth = playerInstance.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.RestoreHealth(saveData.playerHealth);
+                    if (DeathScreen.Instance != null)
+                    {
+                        DeathScreen.Instance.HideDeathScreen();
+                    }
+                }
+                else
+                {
+                    Debug.LogError("PlayerHealth component not found on the player instance.");
+                }
+
+                // ... rest of your code
+            }
+            else
+            {
+                Debug.LogError("Player instance is null.");
+            }
+        }
+    }
+
 
     private void PlaceEntryAndExitRooms() {
 
@@ -516,7 +575,6 @@ public class GameManager : MonoBehaviour
 
     private void SpawnStoryItems(int count)
     {
-        storyFiles = new string[] {"story1.txt", "story2.txt", "story3.txt", "story4.txt", "story5.txt", "story6.txt", "story7.txt"};
         for (int i = 0; i < count; i++)
         {
             MazeCell randomCell = mazeInstance.GetCell(mazeInstance.RandomCoordinates);
@@ -528,9 +586,9 @@ public class GameManager : MonoBehaviour
             storyItem.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
             StoryTrigger storyTrigger = storyItem.GetComponent<StoryTrigger>();
-            if (storyTrigger != null && i < storyFiles.Length)
+            if (storyTrigger != null && i < 6)
             {
-                storyTrigger.storyFileName = storyFiles[i];
+                storyTrigger.number = i;
             }
         }
     }
@@ -550,61 +608,11 @@ public class GameManager : MonoBehaviour
         if(level > endLvl) { SceneManager.LoadScene("DockThingEnd"); }
         //save the number of current level
         saveLevelInstance.SaveLvl(level + 1);
+        //delete position, health and keyes after level (prevention for smaller maze)
+        saveLevelInstance.DeleteSaveWhenNewLevel();
 
         RestartGame();
 
-        //SceneManager.LoadScene(scenename);
-        /*
-        
-
-        // Stop all coroutines to prevent them from affecting the new game instance
-        StopAllCoroutines();
-
-        // Destroy the maze instance and all its children (including walls, cells, etc.)
-        if (mazeInstance != null)
-        { Destroy(mazeInstance.gameObject); }
-
-        // Stop the camera from following the destroyed player
-        Camera.main.GetComponent<CameraFollow>().StopFollowingPlayer();
-
-        // Destroy the player instance
-        if (playerInstance != null)
-        { Destroy(playerInstance.gameObject); }
-
-        // Destroy all zombies in the scene
-        foreach (var zombie in FindObjectsOfType<Zombie>())
-        { Destroy(zombie.gameObject); }
-        
-        // Destroy all fast zombies in the scene
-        foreach (var ZombieFast in FindObjectsOfType<ZombieFast>())
-        { Destroy(ZombieFast.gameObject); }
-
-        // Destroy all keys in the scene
-        foreach (var key in GameObject.FindGameObjectsWithTag("Key"))
-        { Destroy(key.gameObject); }
-        
-        // Destroy all keys in the scene
-        foreach (var storyItem in GameObject.FindGameObjectsWithTag("Story"))
-        { Destroy(storyItem.gameObject); }
-        
-        // Destroy all hearts in the scene
-        foreach (var health in GameObject.FindGameObjectsWithTag("Health"))
-        { Destroy(health.gameObject); }
-
-        // Destroy all entry in the scene
-        if (entry != null)
-        { Destroy(entry.gameObject);  entry = null; }
-
-        // Destroy all exit in the scene
-        if (exit != null)
-        { Destroy(exit.gameObject); exit = null;}
-
-        
-
-
-        // Start a new game
-        StartCoroutine(BeginGame());*/
-        //BeginGame();
     }
 
 

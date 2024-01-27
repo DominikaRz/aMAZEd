@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
         match = FindObjectOfType<Match>();
         
         saveLevelInstance = new SaveLevel();
-        RestoreLighters();
+        //RestoreLighters();
         RestoreMatches();
 
         
@@ -473,8 +473,10 @@ public class Player : MonoBehaviour
     public void Death(){
         scavengerAnimator.SetTrigger("Death");
 
-        useMouseRotation = false;
-
+        torch.SetBurnOutTime(0.2f);
+        
+        //useMouseRotation = false;
+        /*
         float elapsedTime = 0;
         Vector3 startPosition = transform.position; // Camera's current position
         Quaternion startRotation = transform.rotation; // Camera's current rotation
@@ -491,15 +493,17 @@ public class Player : MonoBehaviour
             transform.position = Vector3.Lerp(startPosition, endPosition, ratio);
             transform.rotation = Quaternion.Slerp(startRotation, endRotation, ratio);
 
-            elapsedTime += Time.deltaTime;
+            //elapsedTime += Time.deltaTime;
         }
 
         // Ensure final position and rotation are set
         transform.position = endPosition;
         transform.rotation = endRotation;
+        */
     }
 
-    public void AddLighter(Lighter lighter) {
+ //Lighters
+ /*   public void AddLighter(Lighter lighter) {
         
         Debug.Log($"Lighters: {lightersCollected}");
         lightersCollected++;
@@ -528,6 +532,7 @@ public class Player : MonoBehaviour
         hudManager = FindObjectOfType<HUDManager>();
         hudManager.UpdateLighterDisplay();
     }
+    */
     public void AddMatch(Match match) {
         
         Debug.Log($"Matches: {matchesCollected}");
@@ -543,7 +548,7 @@ public class Player : MonoBehaviour
         if (matchesCollected > 0) {
             match.UseMatch(torch);
             matchesCollected--;
-            saveLevelInstance.removeighterToInventory();
+            saveLevelInstance.removeMatchToInventory();
             
             hudManager = FindObjectOfType<HUDManager>();
             hudManager.UpdateMatchesDisplay();

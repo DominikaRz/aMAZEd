@@ -30,6 +30,16 @@ public class Torch : MonoBehaviour
         //burnOutTimer = time;
         this.burnOutTime = time;
     }
+
+    public void BurnOut(){
+        var emissionModule = fireParticleSystem.emission;
+
+        torchLight.enabled = false;
+        emissionModule.rateOverTime = 0;
+        fireParticleSystem.Stop(); // Stop the particle system
+        audioTourch.Stop();
+    }
+
     void Start()
     {
         if (torchLight == null)

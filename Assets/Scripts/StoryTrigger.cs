@@ -3,7 +3,7 @@ using UnityEngine;
 public class StoryTrigger : MonoBehaviour
 {
     private StoryDisplay storyDisplay;
-    public string storyFileName;
+    public int number;
 
     void Start()
     {
@@ -16,7 +16,7 @@ public class StoryTrigger : MonoBehaviour
         {
             if (storyDisplay != null)
             {
-                storyDisplay.fileName = storyFileName;
+                storyDisplay.textNumber = number;
                 storyDisplay.DisplayStory();
 
                 Destroy(gameObject);
