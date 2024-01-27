@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
     private float currentHealth;
     private HUDManager hudManager;
     public Player playerInstance;
-    //public float CurrentHealth { get { return currentHealth; } }
+    public float CurrentHealth() { return currentHealth; } 
 
     private void Start()
     {
@@ -26,18 +26,29 @@ public class PlayerHealth : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if(currentHealth > 0){
+            if (DeathScreen.Instance != null)
+            {
+                DeathScreen.Instance.HideDeathScreen();
+            }
+        }
+    }
+
     public void TakeDamage(float amount)
     {
         if(currentHealth > 0){
             currentHealth -= amount;
-            Debug.Log($"PlayerHealth: {currentHealth}");
+            //Debug.Log($"PlayerHealth: {currentHealth}");
             hudManager.OnHealthChanged(currentHealth);
         }
         else
         {
             if (DeathScreen.Instance != null)
             {
-                playerInstance.Death();
+                for(int i=0; i>1 ;i++)
+                    playerInstance.Death();
                 DeathScreen.Instance.ShowDeathScreen();
             }
             else

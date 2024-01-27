@@ -49,6 +49,14 @@ public class DeathScreen : MonoBehaviour
         gameObject.SetActive(true); // Show the death screen
         StartCoroutine(ShowOptionsAfterDelay(10f)); // Check if the delay is too long for UX
     }
+    
+    public void HideDeathScreen()
+    {
+        gameObject.SetActive(false); 
+        //loadGameButton.SetActive(false);
+        //restartGameButton.SetActive(false);
+        //quitGameButton.SetActive(false);
+    }
 
     private IEnumerator ShowOptionsAfterDelay(float delay)
     {

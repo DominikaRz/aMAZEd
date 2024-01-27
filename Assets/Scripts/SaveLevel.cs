@@ -13,8 +13,11 @@ public class SaveLevel : MonoBehaviour
         PlayerPrefs.SetFloat("playerPositionY", -0.033f);
         PlayerPrefs.SetFloat("playerPositionZ", data.getPositionZ());
 
-        PlayerPrefs.SetInt("playerHealth", data.playerHealth);
+        //PlayerPrefs.SetFloat("playerPosition", data.getPosition());
+
+        PlayerPrefs.SetFloat("playerHealth", data.playerHealth);
         PlayerPrefs.SetInt("numberOfCollectedKeyes", data.getKeyes());
+
     }
 
     public SaveData Load()
@@ -28,12 +31,22 @@ public class SaveLevel : MonoBehaviour
             PlayerPrefs.GetFloat("playerPositionY"),
             PlayerPrefs.GetFloat("playerPositionZ"));
 
-        data.playerHealth = PlayerPrefs.GetInt("playerHealth");
+        data.playerHealth = PlayerPrefs.GetFloat("playerHealth");
         data.setKeyes(PlayerPrefs.GetInt("numberOfCollectedKeyes"));
         
         return data;
 
     }
+
+    public void DeleteSaveWhenNewLevel()
+    {
+        PlayerPrefs.DeleteKey("playerPositionX");
+        PlayerPrefs.DeleteKey("playerPositionY");
+        PlayerPrefs.DeleteKey("playerPositionZ");
+        PlayerPrefs.DeleteKey("playerHealth");
+        PlayerPrefs.DeleteKey("numberOfCollectedKeyes");
+    }
+
 
   //level number management
     public int LoadLvl()
@@ -44,7 +57,7 @@ public class SaveLevel : MonoBehaviour
     {
         PlayerPrefs.SetInt("levelNumber", level);
     }
-    
+/*  
   //lighter number management
     public int loadLighterNumber()
     {
@@ -67,6 +80,9 @@ public class SaveLevel : MonoBehaviour
         lighter--;
         SaveLighterNumber(lighter);
     }
+*/
+
+  //matches number management
     public int loadMatchNumber()
     {
         return PlayerPrefs.GetInt("matchesNumber");
@@ -106,5 +122,7 @@ public class SaveLevel : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
     }
+
+    
 
 }

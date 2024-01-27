@@ -45,6 +45,23 @@ public class Maze : MonoBehaviour {
 		return cells[coordinates.x, coordinates.z];
 	}
 
+	public IntVector2 GetCurrentCell(Vector3 playerPosition) {
+		// Convert the player's 3D world position to 2D grid coordinates
+		// The maze is assumed to start at (0,0) in the bottom left corner for the calculation
+		// Adjust this if your maze has a different origin
+		int x = Mathf.FloorToInt(playerPosition.x + size.x * 0.5f);
+		int z = Mathf.FloorToInt(playerPosition.z + size.z * 0.5f);
+
+		// Ensure the coordinates are within the bounds of the maze
+		if(x >= 0 && x < size.x && z >= 0 && z < size.z) {
+			return new IntVector2(x, z);
+		} else {
+			// Return null or handle the error appropriately if the position is out of bounds
+			Debug.LogError("Player position is outside the maze bounds.");
+			return new IntVector2(0, 0);
+		}
+	}
+
 	
 	public IEnumerator Generate () {
 		WaitForSeconds delay = new WaitForSeconds(generationStepDelay);

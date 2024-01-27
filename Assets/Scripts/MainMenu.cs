@@ -17,8 +17,6 @@ public class MainMenu : MonoBehaviour
         saveLevelInstance = gameObject.AddComponent<SaveLevel>();
         PlayBackgroundMusic();
         UpdateButtonStates();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
         
         Invoke("FadeIn", 1f);
         
@@ -39,6 +37,8 @@ public class MainMenu : MonoBehaviour
     public void LoadNewGame()
     {
         saveLevelInstance.Delete();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         saveLevelInstance.SaveLvl(1);
         saveLevelInstance.SetEndLevelNumber();
         SceneManager.LoadScene("DockThing");
@@ -47,6 +47,8 @@ public class MainMenu : MonoBehaviour
 
     public void ContinueGame()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         SceneManager.LoadScene("MazeScene");
         // Optional: Stop music if it shouldn't play in the next scene
     }

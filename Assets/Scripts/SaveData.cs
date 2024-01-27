@@ -7,7 +7,7 @@ public class SaveData
 
     public float playerPositionX, playerPositionY, playerPositionZ;
 
-    public int playerHealth;
+    public float playerHealth;
     public int numberOfCollectedKeyes;
 
     public int GetLevelNumber() 
@@ -32,7 +32,7 @@ public class SaveData
         return this.playerPositionZ;
     }
     
-    public int getHealth(){
+    public float getHealth(){
         return this.playerHealth;
     }
     public int getKeyes(){
@@ -54,7 +54,7 @@ public class SaveData
         this.numberOfCollectedKeyes = keyes;
     }
     /**/
-    public void setHealth(int health){
+    public void setHealth(float health){
         this.playerHealth = health;
     }
 

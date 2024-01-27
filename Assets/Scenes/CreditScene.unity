@@ -579,13 +579,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Mateusz Gu\u015Bciora\nDominika Rzepka\n\nMateusz Gu\u015Bciora\nDominika
-    Rzepka\n\nDominika Rzepka\n\nMateusz Gu\u015Bciora\n\nTo Phd Marek Kopel \nfor
-    help in creation\n\nUnity Engine\nBlender\n\nOld Sea Port - Environment \nProvided
-    by VIVID Arts\n\nMatch\r\nProvided by svyART\nsketchfab.com\r\n\r\nTileable Bricks
-    Wall\r\nProvided by Game-Ready Studios\r\n\r\nFree Scavenger\r\nProvided by Paul
-    N.\r\n\r\nZombie\r\nProvided by Pxltiger\r\n\r\nHungry Zombie\r\nProvided by
-    Andryuha1981\r\n\r\nRust Key\r\nProvided by Aleksn09\r\n\r\nBasic Motions FREE\r\nProvided
-    by Kevin Iglesias\r\n\r\nDug-out Canoe\r\nProvided by Matt LeMoine\r\nsketchfab.com\r\n\r\nSimple
+    Rzepka\n\nDominika Rzepka\n\nMateusz Gu\u015Bciora\n\nTo Marek Kopel, Ph.D. in
+    Engineering,\nfor help in creation\n\nUnity Engine\nBlender\n\nOld Sea Port -
+    Environment \nProvided by VIVID Arts\n\nMatch\r\nProvided by svyART\nsketchfab.com\r\n\r\nTileable
+    Bricks Wall\r\nProvided by Game-Ready Studios\r\n\r\nFree Scavenger\r\nProvided
+    by Paul N.\r\n\r\nZombie\r\nProvided by Pxltiger\r\n\r\nHungry Zombie\r\nProvided
+    by Andryuha1981\r\n\r\nRust Key\r\nProvided by Aleksn09\r\n\r\nBasic Motions
+    FREE\r\nProvided by Kevin Iglesias\r\n\r\nDug-out Canoe\r\nProvided by Matt LeMoine\r\nsketchfab.com\r\n\r\nSimple
     Collectibles Pack\r\nProvided by Dillon Wallace\r\n\r\nClipboard\r\nProvided
     by cookiepopworks.com\r\n\r\nGameFactory_Fire Tourch Mech\r\nProvided by Game
     Factory\r\nYouTube.com\n\nCopyright \xA92024 by Politechnika Wroc\u0142awska"
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 16777215
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
