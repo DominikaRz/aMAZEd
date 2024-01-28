@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SplashScreenManager : MonoBehaviour
 {
-    public string name;
+    public new string name;
     private Animator animator; // Reference to the Animator component
     private float delayTimer = 1.5f;
     void Start()
