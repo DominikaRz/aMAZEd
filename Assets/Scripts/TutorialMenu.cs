@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TutorialMenu : MonoBehaviour
 {
-    public string name = "MazeScene";
+    public new string name;
     private Animator animator; // Reference to the Animator component
     private float delayTimer = 1.5f;
     private bool trigger = false;

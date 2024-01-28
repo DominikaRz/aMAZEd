@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
 
     [Range(10f, 100f)]
     public float mouseSensitivity = 70f;
-    private float pitch = 0f; // Add this variable at the class level
+    //private float pitch = 0f; // Add this variable at the class level
     public float verticalMouseSensitivity = 2.0f;
     public float maxSpeed = 3f;
     public float speed = 1.5f;

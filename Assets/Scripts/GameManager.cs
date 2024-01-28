@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private Player playerInstance;
     private Camera playerCamera;
     public Torch torchInstance;
+    public GameObject ErrorUI;
 
 
     private Zombie zombieInstance;
@@ -57,6 +58,8 @@ public class GameManager : MonoBehaviour
     public static int numberOfLighters = 3;
     public static int numberOfMatches = 3;
 
+    private bool stopped = false;
+
     private SaveLevel saveLevelInstance;
 
     public GameObject storyItemPrefab; // Assign your story item prefab in the Inspector
@@ -73,6 +76,7 @@ public class GameManager : MonoBehaviour
         storyDisplay = FindObjectOfType<StoryDisplay>();
         levelDisplay = FindObjectOfType<LevelDisplay>();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
+        ErrorUI.SetActive(false);   
     }
         
     
@@ -84,10 +88,8 @@ public class GameManager : MonoBehaviour
             SaveGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.Return))
-        {
-            //mazeInstance.ToggleDoorsInRoom(false); // Close all doors in the current room
-        }
+        if (stopped) { ErrorDisplay(); }
+        else { ErrorHide(); }
 
     }
 
@@ -434,26 +436,31 @@ public class GameManager : MonoBehaviour
             level = saveData.levelNumber;
             if (playerInstance != null)
             {
-                //playerInstance.transform.position = new Vector3(saveData.getPositionX(), saveData.getPositionY(), saveData.getPositionZ());
-                //playerInstance.transform.rotation = Quaternion.identity; // If you have saved rotation, use it here
-                playerInstance.SetLocation(mazeInstance.GetCell(new IntVector2((int)(saveData.getPositionX()), (int)(saveData.getPositionZ()))));
-
-                // Update this line to get the PlayerHealth component from playerInstance
-                PlayerHealth playerHealth = playerInstance.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
+                if(saveData.getPositionX() >= 0 && saveData.getPositionX() < mazeInstance.size.x &&
+                    saveData.getPositionZ() >= 0 && saveData.getPositionZ() < mazeInstance.size.z)
                 {
-                    playerHealth.RestoreHealth(saveData.playerHealth);
-                    if (DeathScreen.Instance != null)
+                    playerInstance.SetLocation(mazeInstance.GetCell(new IntVector2((int)(saveData.getPositionX()), (int)(saveData.getPositionZ()))));
+
+                    // Update this line to get the PlayerHealth component from playerInstance
+                    PlayerHealth playerHealth = playerInstance.GetComponent<PlayerHealth>();
+                    if (playerHealth != null)
                     {
-                        DeathScreen.Instance.HideDeathScreen();
+                        playerHealth.RestoreHealth(saveData.playerHealth);
+                        if (DeathScreen.Instance != null)
+                        {
+                            DeathScreen.Instance.HideDeathScreen();
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("PlayerHealth component not found on the player instance.");
                     }
                 }
-                else
-                {
-                    Debug.LogError("PlayerHealth component not found on the player instance.");
+                else{
+                    ErrorDisplay();
+                    Debug.Log("Show message of saved data");
                 }
-
-                // ... rest of your code
+                
             }
             else
             {
@@ -461,7 +468,21 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    
+    public void ErrorDisplay()
+    {
+        Time.timeScale = 0f;
+        ErrorUI.SetActive(true);
+        stopped = true;
+    }
 
+
+    public void ErrorHide()
+    {
+        Time.timeScale = 1f;
+        ErrorUI.SetActive(false);
+        stopped = false;
+    }
 
     private void PlaceEntryAndExitRooms() {
 
@@ -609,7 +630,7 @@ public class GameManager : MonoBehaviour
         //save the number of current level
         saveLevelInstance.SaveLvl(level + 1);
         //delete position, health and keyes after level (prevention for smaller maze)
-        saveLevelInstance.DeleteSaveWhenNewLevel();
+        //saveLevelInstance.DeleteSaveWhenNewLevel();
 
         RestartGame();
 
